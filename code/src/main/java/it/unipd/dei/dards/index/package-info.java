@@ -40,4 +40,4 @@
  * @version 1.00
  * @since 1.00
  */
-package it.unipd.dei.se.index;
+package it.unipd.dei.dards.index;
