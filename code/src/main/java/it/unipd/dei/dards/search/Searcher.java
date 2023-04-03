@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 
-package it.unipd.dei.se.search;
+package it.unipd.dei.dards.search;
 
-import it.unipd.dei.se.parse.ParsedDocument;
+import it.unipd.dei.dards.parse.ParsedDocument;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
@@ -35,6 +35,7 @@ import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -45,6 +46,10 @@ import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.List;
+
+import com.univocity.parsers.tsv.TsvParser;
+import com.univocity.parsers.tsv.TsvParserSettings;
 
 /**
  * Searches a document collection.
@@ -188,7 +193,16 @@ public class Searcher {
         try {
             BufferedReader in = Files.newBufferedReader(Paths.get(topicsFile), StandardCharsets.UTF_8);
 
-            topics = new TrecTopicsReader().readQueries(in);
+            //topics = new TrecTopicsReader().readQueries(in);
+            //topics = array QualityQuery[].
+            topics = null; //TODO: PLACEHOLDER
+            TsvParserSettings settings = new TsvParserSettings();
+            settings.getFormat().setLineSeparator("n");
+            TsvParser parser = new TsvParser(settings);
+            List<String[]> allRows = parser.parseAll(new File("./input/English/Queries/train.tsv"));
+            for (int i = 0; i < allRows.size(); i++){
+                System.out.println(allRows);
+            }
 
             in.close();
         } catch (IOException e) {
@@ -335,13 +349,13 @@ public class Searcher {
      */
     public static void main(String[] args) throws Exception {
 
-        final String topics = "/Users/ferro/Documents/didattica/repositories/search-engines/collections/TREC_08_1999_AdHoc/topics.txt";
+        final String topics = "./input/English/Queries/train.tsv";
 
         final String indexPath = "experiment/index-stop-nostem";
 
         final String runPath = "experiment";
 
-        final String runID = "seupd2223-helloTipster-stop-nostem";
+        final String runID = "seupd2223-dards";
 
         final int maxDocsRetrieved = 1000;
 

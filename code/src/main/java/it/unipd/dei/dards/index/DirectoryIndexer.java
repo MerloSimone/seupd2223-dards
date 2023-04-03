@@ -14,11 +14,11 @@
  *  limitations under the License.
  */
 
-package it.unipd.dei.se.index;
+package it.unipd.dei.dards.index;
 
-import it.unipd.dei.se.parse.DocumentParser;
-import it.unipd.dei.se.parse.ParsedDocument;
-import it.unipd.dei.se.parse.TipsterParser;
+import it.unipd.dei.dards.parse.DocumentParser;
+import it.unipd.dei.dards.parse.ParsedDocument;
+import it.unipd.dei.dards.parse.TipsterParser;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
@@ -320,7 +320,7 @@ public class DirectoryIndexer {
     public static void main(String[] args) throws Exception {
 
         final int ramBuffer = 256;
-        final String docsPath = "/Users/ferro/Documents/experimental-collections/corpora/TREC/tipster_trec07";
+        final String docsPath = "./input/English/Documents/Trec";
         final String indexPath = "experiment/index-stop-stem";
 
         final String extension = "txt";

@@ -69,3 +69,5 @@ tomcat-logs/
 
 # OSX
 .DS_Store
+/experiment/
+/input/

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package it.unipd.dei.se.parse;
+package it.unipd.dei.dards.parse;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  * @version 1.00
  * @since 1.00
  */
-public class TipsterParser extends it.unipd.dei.se.parse.DocumentParser {
+public class TipsterParser extends it.unipd.dei.dards.parse.DocumentParser {
 
     /**
      * The size of the buffer for the body element.
@@ -44,7 +44,7 @@ public class TipsterParser extends it.unipd.dei.se.parse.DocumentParser {
     /**
      * The currently parsed document
      */
-    private it.unipd.dei.se.parse.ParsedDocument document = null;
+    private it.unipd.dei.dards.parse.ParsedDocument document = null;
 
 
     /**
@@ -105,7 +105,7 @@ public class TipsterParser extends it.unipd.dei.se.parse.DocumentParser {
         }
 
         if (id != null) {
-            document = new it.unipd.dei.se.parse.ParsedDocument(id, body.length() > 0 ?
+            document = new it.unipd.dei.dards.parse.ParsedDocument(id, body.length() > 0 ?
                     body.toString().replaceAll("<[^>]*>", " ") : "#");
         }
 
@@ -114,7 +114,7 @@ public class TipsterParser extends it.unipd.dei.se.parse.DocumentParser {
     }
 
     @Override
-    protected final it.unipd.dei.se.parse.ParsedDocument parse() {
+    protected final it.unipd.dei.dards.parse.ParsedDocument parse() {
         return document;
     }
 
@@ -132,7 +132,7 @@ public class TipsterParser extends it.unipd.dei.se.parse.DocumentParser {
 
         TipsterParser p = new TipsterParser(reader);
 
-        for (it.unipd.dei.se.parse.ParsedDocument d : p) {
+        for (it.unipd.dei.dards.parse.ParsedDocument d : p) {
             System.out.printf("%n%n------------------------------------%n%s%n%n%n", d.toString());
         }
 

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package it.unipd.dei.se.parse;
+package it.unipd.dei.dards.parse;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;

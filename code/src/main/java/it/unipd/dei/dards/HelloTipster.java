@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package it.unipd.dei.se;
+package it.unipd.dei.dards;
 
 
-import it.unipd.dei.se.index.DirectoryIndexer;
-import it.unipd.dei.se.parse.TipsterParser;
-import it.unipd.dei.se.search.Searcher;
+import it.unipd.dei.dards.index.DirectoryIndexer;
+import it.unipd.dei.dards.parse.TipsterParser;
+import it.unipd.dei.dards.search.Searcher;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
@@ -47,7 +47,7 @@ public class HelloTipster {
     public static void main(String[] args) throws Exception {
 
         final int ramBuffer = 256;
-        final String docsPath = "/media/diego/Dati/Varie/publish/English/Documents/Trec";
+        final String docsPath = "./input/English/Documents/Trec";
         final String indexPath = "experiment/index-stop-nostem";
 
         final String extension = "txt";
@@ -59,7 +59,7 @@ public class HelloTipster {
 
         final Similarity sim = new BM25Similarity();
 
-        final String topics = "/media/diego/Dati/Varie/publish/English/Queries/train.trec";
+        final String topics = "./input/English/Queries/train.tsv";
 
         final String runPath = "experiment";
 

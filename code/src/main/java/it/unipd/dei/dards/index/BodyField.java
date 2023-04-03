@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 
-package it.unipd.dei.se.index;
+package it.unipd.dei.dards.index;
 
-import it.unipd.dei.se.parse.ParsedDocument;
+import it.unipd.dei.dards.parse.ParsedDocument;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.IndexOptions;

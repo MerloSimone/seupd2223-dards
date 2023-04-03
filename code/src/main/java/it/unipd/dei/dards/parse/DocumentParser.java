@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package it.unipd.dei.se.parse;
+package it.unipd.dei.dards.parse;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -29,7 +29,7 @@ import java.util.NoSuchElementException;
  * @since 1.00
  */
 public abstract class DocumentParser
-        implements Iterator<it.unipd.dei.se.parse.ParsedDocument>, Iterable<it.unipd.dei.se.parse.ParsedDocument> {
+        implements Iterator<it.unipd.dei.dards.parse.ParsedDocument>, Iterable<it.unipd.dei.dards.parse.ParsedDocument> {
 
     /**
      * Indicates whether there is another {@code ParsedDocument} to return.
@@ -59,7 +59,7 @@ public abstract class DocumentParser
 
 
     @Override
-    public final Iterator<it.unipd.dei.se.parse.ParsedDocument> iterator() {
+    public final Iterator<it.unipd.dei.dards.parse.ParsedDocument> iterator() {
         return this;
     }
 
@@ -69,7 +69,7 @@ public abstract class DocumentParser
     }
 
     @Override
-    public final it.unipd.dei.se.parse.ParsedDocument next() {
+    public final it.unipd.dei.dards.parse.ParsedDocument next() {
 
         if (!next) {
             throw new NoSuchElementException("No more documents to parse.");
@@ -157,7 +157,7 @@ public abstract class DocumentParser
      *
      * @return the parsed document.
      */
-    protected abstract it.unipd.dei.se.parse.ParsedDocument parse();
+    protected abstract it.unipd.dei.dards.parse.ParsedDocument parse();
 
 
 }
