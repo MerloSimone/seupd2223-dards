@@ -321,7 +321,7 @@ public class DirectoryIndexer {
 
         final int ramBuffer = 256;
         final String docsPath = "./input/English/Documents/Trec";
-        final String indexPath = "experiment/index-stop-stem";
+        final String indexPath = "code/experiment/index-stop-stem";
 
         final String extension = "txt";
         final int expectedDocs = 528155;

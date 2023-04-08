@@ -351,7 +351,7 @@ public class Searcher {
 
         final String topics = "./input/English/Queries/train.tsv";
 
-        final String indexPath = "experiment/index-stop-nostem";
+        final String indexPath = "code/experiment/index-stop-stem";
 
         final String runPath = "experiment";
 
