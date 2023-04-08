@@ -197,11 +197,11 @@ public class Searcher {
             //topics = array QualityQuery[].
             topics = null; //TODO: PLACEHOLDER
             TsvParserSettings settings = new TsvParserSettings();
-            settings.getFormat().setLineSeparator("n");
+            settings.getFormat().setLineSeparator("\n");
             TsvParser parser = new TsvParser(settings);
             List<String[]> allRows = parser.parseAll(new File("./input/English/Queries/train.tsv"));
-            for (int i = 0; i < allRows.size(); i++){
-                System.out.println(allRows);
+            for (String[] row: allRows){
+                System.out.println("id: "+row[0]+" query: "+row[1]+" \n");
             }
 
             in.close();
