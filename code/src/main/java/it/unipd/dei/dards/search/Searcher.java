@@ -23,7 +23,6 @@ import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.benchmark.quality.QualityQuery;
-import org.apache.lucene.benchmark.quality.trec.TrecTopicsReader;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -43,10 +42,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.List;
+import java.util.*;
 
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
@@ -195,13 +191,23 @@ public class Searcher {
 
             //topics = new TrecTopicsReader().readQueries(in);
             //topics = array QualityQuery[].
-            topics = null; //TODO: PLACEHOLDER
             TsvParserSettings settings = new TsvParserSettings();
             settings.getFormat().setLineSeparator("\n");
             TsvParser parser = new TsvParser(settings);
             List<String[]> allRows = parser.parseAll(new File("./input/English/Queries/train.tsv"));
+
+            topics = new QualityQuery[allRows.size()]; //TODO: PLACEHOLDER
+
+            int i = 0;
+            HashMap<String, String> StringMap = new HashMap<>();
+            System.out.printf("%n#### Parsing queries ####%n");
             for (String[] row: allRows){
-                System.out.println("id: "+row[0]+" query: "+row[1]+" \n");
+                StringMap.clear();
+                StringMap.put(TOPIC_FIELDS.TITLE, row[1]);
+                topics[i] = new QualityQuery(row[0], StringMap);
+                System.out.printf("%d/%d: %s %s\n",i+1, expectedTopics, topics[i].getQueryID(), topics[i].getValue(TOPIC_FIELDS.TITLE));
+//                System.out.println("id: "+row[0]+" query: "+row[1]+" \n");
+                i++;
             }
 
             in.close();
@@ -309,8 +315,7 @@ public class Searcher {
                 bq = new BooleanQuery.Builder();
 
                 bq.add(qp.parse(QueryParserBase.escape(t.getValue(TOPIC_FIELDS.TITLE))), BooleanClause.Occur.SHOULD);
-                bq.add(qp.parse(QueryParserBase.escape(t.getValue(TOPIC_FIELDS.DESCRIPTION))),
-                       BooleanClause.Occur.SHOULD);
+                //bq.add(qp.parse(QueryParserBase.escape(t.getValue(TOPIC_FIELDS.DESCRIPTION))), BooleanClause.Occur.SHOULD);
 
                 q = bq.build();
 
@@ -362,7 +367,7 @@ public class Searcher {
         final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
                 LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).build();
 
-        Searcher s = new Searcher(a, new BM25Similarity(), indexPath, topics, 50, runID, runPath, maxDocsRetrieved);
+        Searcher s = new Searcher(a, new BM25Similarity(), indexPath, topics, 672, runID, runPath, maxDocsRetrieved);
 
         s.search();
 
