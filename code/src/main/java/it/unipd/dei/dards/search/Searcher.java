@@ -358,7 +358,7 @@ public class Searcher {
 
         final String indexPath = "code/experiment/index-stop-stem";
 
-        final String runPath = "experiment";
+        final String runPath = "code/experiment";
 
         final String runID = "seupd2223-dards";
 
