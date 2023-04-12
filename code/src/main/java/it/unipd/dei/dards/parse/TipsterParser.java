@@ -73,6 +73,7 @@ public class TipsterParser extends it.unipd.dei.dards.parse.DocumentParser {
             boolean in_doc = false;
             while (true) {
                 line = ((BufferedReader) in).readLine();
+                //System.out.println(line);
                 lineno++;
 
                 if (line == null) {
@@ -128,12 +129,14 @@ public class TipsterParser extends it.unipd.dei.dards.parse.DocumentParser {
     public static void main(String[] args) throws Exception {
 
         Reader reader = new FileReader(
-                "/Users/ferro/Documents/experimental-collections/corpora/TREC/TIPSTER_trec07/LATIMES/LA010289.Z.txt");
+                "./input/English/Documents/Trec/collector_kodicare_1.txt");
 
         TipsterParser p = new TipsterParser(reader);
 
         for (it.unipd.dei.dards.parse.ParsedDocument d : p) {
             System.out.printf("%n%n------------------------------------%n%s%n%n%n", d.toString());
+
+            break;
         }
 
 
