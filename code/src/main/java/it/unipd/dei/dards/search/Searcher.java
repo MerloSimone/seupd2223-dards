@@ -203,13 +203,16 @@ public class Searcher {
             HashMap<String, String> StringMap = new HashMap<>();
             System.out.printf("%n#### Parsing queries ####%n");
             for (String[] row: allRows){
-                StringMap.clear();
+                StringMap = new HashMap<>();
                 StringMap.put(TOPIC_FIELDS.TITLE, row[1]);
                 topics[i] = new QualityQuery(row[0], StringMap);
-                System.out.printf("%d/%d: %s %s\n",i+1, expectedTopics, topics[i].getQueryID(), topics[i].getValue(TOPIC_FIELDS.TITLE));
+                System.out.printf("%d/%d: %s | %s\n",i+1, expectedTopics, topics[i].getQueryID(), topics[i].getValue(TOPIC_FIELDS.TITLE));
 //                System.out.println("id: "+row[0]+" query: "+row[1]+" \n");
                 i++;
             }
+
+            //for(int j=0; j<topics.length; j++) System.out.println("!! "+topics[j].getQueryID()+" | "+topics[j].getValue(TOPIC_FIELDS.TITLE));
+            //for(QualityQuery t: topics) System.out.println("--"+t.getQueryID()+" | "+t.getValue(TOPIC_FIELDS.TITLE));
 
             in.close();
         } catch (IOException e) {
@@ -309,9 +312,10 @@ public class Searcher {
         String docID = null;
 
         try {
+
             for (QualityQuery t : topics) {
 
-                System.out.printf("Searching for topic %s.%n", t.getQueryID());
+                System.out.printf(" Searching for topic %s | %s .%n", t.getQueryID(), t.getValue(TOPIC_FIELDS.TITLE));
 
                 bq = new BooleanQuery.Builder();
 
@@ -327,7 +331,7 @@ public class Searcher {
                 for (int i = 0, n = sd.length; i < n; i++) {
                     docID = reader.document(sd[i].doc, idField).get(ParsedDocument.FIELDS.ID);
 
-                    run.printf(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", t.getQueryID(), docID, i, sd[i].score,
+                    run.printf(Locale.ENGLISH, " %s Q0 %s %d %.6f %s%n", t.getQueryID(), docID, i, sd[i].score,
                                runID);
                 }
 

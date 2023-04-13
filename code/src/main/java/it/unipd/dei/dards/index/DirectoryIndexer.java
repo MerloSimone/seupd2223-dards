@@ -328,7 +328,7 @@ public class DirectoryIndexer {
 
         final String extension = "txt";
         final int expectedDocs = 1570734;
-        final String charsetName = StandardCharsets.UTF_16.name();
+        final String charsetName = StandardCharsets.UTF_8.name();
 
         final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
                 LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).addTokenFilter(PorterStemFilterFactory.class).build();
