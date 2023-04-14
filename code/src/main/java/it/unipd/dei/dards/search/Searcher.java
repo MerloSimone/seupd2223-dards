@@ -51,7 +51,7 @@ import com.univocity.parsers.tsv.TsvParserSettings;
 /**
  * Searches a document collection.
  *
- * @author Nicola Ferro (ferro@dei.unipd.it)
+ * @author DARDS
  * @version 1.00
  * @since 1.00
  */
@@ -60,7 +60,7 @@ public class Searcher {
     /**
      * The fields of the typical TREC topics.
      *
-     * @author Nicola Ferro
+     * @author DARDS
      * @version 1.00
      * @since 1.00
      */

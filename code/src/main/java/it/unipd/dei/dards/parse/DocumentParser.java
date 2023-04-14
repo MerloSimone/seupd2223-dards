@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
 /**
  * Represents a document parser.
  *
- * @author Nicola Ferro (ferro@dei.unipd.it)
+ * @author DARDS
  * @version 1.00
  * @since 1.00
  */

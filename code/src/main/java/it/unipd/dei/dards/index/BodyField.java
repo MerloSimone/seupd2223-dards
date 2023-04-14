@@ -29,7 +29,7 @@ import java.io.Reader;
  * It is a tokenized field, not stored, keeping only document ids and term frequencies (see {@link
  * IndexOptions#DOCS_AND_FREQS} in order to minimize the space occupation.
  *
- * @author Nicola Ferro (ferro@dei.unipd.it)
+ * @author DARDS
  * @version 1.00
  * @since 1.00
  */

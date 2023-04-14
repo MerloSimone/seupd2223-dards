@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  * It is based on the parser <a href="https://github.com/isoboroff/trec-demo/blob/master/src/TrecDocIterator.java"
  * target="_blank">TrecDocIterator.java</a> by Ian Soboroff.
  *
- * @author Nicola Ferro
+ * @author DARDS
  * @version 1.00
  * @since 1.00
  */
