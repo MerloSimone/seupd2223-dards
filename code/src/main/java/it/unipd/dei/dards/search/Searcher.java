@@ -195,7 +195,7 @@ public class Searcher {
             TsvParserSettings settings = new TsvParserSettings();
             settings.getFormat().setLineSeparator("\n");
             TsvParser parser = new TsvParser(settings);
-            List<String[]> allRows = parser.parseAll(new File("./input/English/Queries/train.tsv"));
+            List<String[]> allRows = parser.parseAll(new File(topicsFile));
 
             topics = new QualityQuery[allRows.size()]; //TODO: PLACEHOLDER
 
