@@ -17,11 +17,9 @@ package it.unipd.dei.dards.analysis;
 
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.LowerCaseFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.miscellaneous.TypeAsSynonymFilter;
-import org.apache.lucene.analysis.opennlp.OpenNLPLemmatizerFilter;
 import org.apache.lucene.analysis.opennlp.OpenNLPPOSFilter;
 import org.apache.lucene.analysis.opennlp.OpenNLPTokenizer;
 
@@ -38,12 +36,12 @@ import static it.unipd.dei.dards.analysis.AnalyzerUtil.*;
  * @version 1.0
  * @since 1.0
  */
-public class HelloOpenNlpAnalyzer extends Analyzer {
+public class BaseOpenNlpAnalyzer extends Analyzer {
 
 	/**
 	 * Creates a new instance of the analyzer.
 	 */
-	public HelloOpenNlpAnalyzer() {
+	public BaseOpenNlpAnalyzer() {
 		super();
 	}
 
@@ -101,7 +99,7 @@ public class HelloOpenNlpAnalyzer extends Analyzer {
 		final String text = "I now live in Rome where I met my wife Alice back in 2010 during a beautiful afternoon. Occasionally, I fly to New York to visit the United Nations where I would like to work. The last time I was there in March 2019, the flight was very inconvenient, leaving at 4:00 am, and expensive, over 1,500 dollars.";
 
 		// use the analyzer to process the text and print diagnostic information about each token
-		consumeTokenStream(new HelloOpenNlpAnalyzer(), text);
+		consumeTokenStream(new BaseOpenNlpAnalyzer(), text);
 
 	}
 
