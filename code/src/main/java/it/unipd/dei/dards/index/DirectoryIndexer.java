@@ -36,13 +36,14 @@ import org.apache.lucene.store.FSDirectory;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
 /**
  * Indexes documents processing a whole directory tree.
  *
- * @author Nicola Ferro
+ * @author DARDS
  * @version 1.00
  * @since 1.00
  */
@@ -278,6 +279,8 @@ public class DirectoryIndexer {
 
                         // add the document body
                         doc.add(new BodyField(pd.getBody()));
+                        //System.out.println(pd.getIdentifier());
+                        //System.out.println(pd.getBody());
 
                         writer.addDocument(doc);
 
@@ -321,11 +324,11 @@ public class DirectoryIndexer {
 
         final int ramBuffer = 256;
         final String docsPath = "./input/English/Documents/Trec";
-        final String indexPath = "experiment/index-stop-stem";
+        final String indexPath = "code/experiment/index-stop-stem";
 
         final String extension = "txt";
-        final int expectedDocs = 528155;
-        final String charsetName = "ISO-8859-1";
+        final int expectedDocs = 1570734;
+        final String charsetName = StandardCharsets.UTF_8.name();
 
         final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
                 LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).addTokenFilter(PorterStemFilterFactory.class).build();

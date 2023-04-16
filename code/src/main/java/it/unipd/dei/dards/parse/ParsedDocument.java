@@ -23,7 +23,7 @@ import org.apache.lucene.document.Field;
 /**
  * Represents a parsed document to be indexed.
  *
- * @author Nicola Ferro (ferro@dei.unipd.it)
+ * @author DARDS
  * @version 1.00
  * @since 1.00
  */

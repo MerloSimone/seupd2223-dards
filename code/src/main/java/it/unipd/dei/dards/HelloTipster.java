@@ -31,7 +31,7 @@ import org.apache.lucene.search.similarities.Similarity;
  * Introductory example on how to use <a href="https://lucene.apache.org/" target="_blank">Apache Lucene</a> to index
  * and search the TIPSTER corpus.
  *
- * @author Nicola Ferro (ferro@dei.unipd.it)
+ * @author DARDS
  * @version 1.0
  * @since 1.0
  */

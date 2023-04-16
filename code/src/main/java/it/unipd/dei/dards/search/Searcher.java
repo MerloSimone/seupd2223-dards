@@ -21,9 +21,9 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
+import org.apache.lucene.analysis.en.PorterStemFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.benchmark.quality.QualityQuery;
-import org.apache.lucene.benchmark.quality.trec.TrecTopicsReader;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -43,10 +43,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.List;
+import java.util.*;
 
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
@@ -54,7 +51,7 @@ import com.univocity.parsers.tsv.TsvParserSettings;
 /**
  * Searches a document collection.
  *
- * @author Nicola Ferro (ferro@dei.unipd.it)
+ * @author DARDS
  * @version 1.00
  * @since 1.00
  */
@@ -63,7 +60,7 @@ public class Searcher {
     /**
      * The fields of the typical TREC topics.
      *
-     * @author Nicola Ferro
+     * @author DARDS
      * @version 1.00
      * @since 1.00
      */
@@ -195,14 +192,27 @@ public class Searcher {
 
             //topics = new TrecTopicsReader().readQueries(in);
             //topics = array QualityQuery[].
-            topics = null; //TODO: PLACEHOLDER
             TsvParserSettings settings = new TsvParserSettings();
-            settings.getFormat().setLineSeparator("n");
+            settings.getFormat().setLineSeparator("\n");
             TsvParser parser = new TsvParser(settings);
-            List<String[]> allRows = parser.parseAll(new File("./input/English/Queries/train.tsv"));
-            for (int i = 0; i < allRows.size(); i++){
-                System.out.println(allRows);
+            List<String[]> allRows = parser.parseAll(new File(topicsFile));
+
+            topics = new QualityQuery[allRows.size()]; //TODO: PLACEHOLDER
+
+            int i = 0;
+            HashMap<String, String> StringMap = new HashMap<>();
+            System.out.printf("%n#### Parsing queries ####%n");
+            for (String[] row: allRows){
+                StringMap = new HashMap<>();
+                StringMap.put(TOPIC_FIELDS.TITLE, row[1]);
+                topics[i] = new QualityQuery(row[0], StringMap);
+                System.out.printf("%d/%d: %s | %s\n",i+1, expectedTopics, topics[i].getQueryID(), topics[i].getValue(TOPIC_FIELDS.TITLE));
+//                System.out.println("id: "+row[0]+" query: "+row[1]+" \n");
+                i++;
             }
+
+            //for(int j=0; j<topics.length; j++) System.out.println("!! "+topics[j].getQueryID()+" | "+topics[j].getValue(TOPIC_FIELDS.TITLE));
+            //for(QualityQuery t: topics) System.out.println("--"+t.getQueryID()+" | "+t.getValue(TOPIC_FIELDS.TITLE));
 
             in.close();
         } catch (IOException e) {
@@ -302,15 +312,15 @@ public class Searcher {
         String docID = null;
 
         try {
+
             for (QualityQuery t : topics) {
 
-                System.out.printf("Searching for topic %s.%n", t.getQueryID());
+                System.out.printf(" Searching for topic %s | %s .%n", t.getQueryID(), t.getValue(TOPIC_FIELDS.TITLE));
 
                 bq = new BooleanQuery.Builder();
 
                 bq.add(qp.parse(QueryParserBase.escape(t.getValue(TOPIC_FIELDS.TITLE))), BooleanClause.Occur.SHOULD);
-                bq.add(qp.parse(QueryParserBase.escape(t.getValue(TOPIC_FIELDS.DESCRIPTION))),
-                       BooleanClause.Occur.SHOULD);
+                //bq.add(qp.parse(QueryParserBase.escape(t.getValue(TOPIC_FIELDS.DESCRIPTION))), BooleanClause.Occur.SHOULD);
 
                 q = bq.build();
 
@@ -321,7 +331,7 @@ public class Searcher {
                 for (int i = 0, n = sd.length; i < n; i++) {
                     docID = reader.document(sd[i].doc, idField).get(ParsedDocument.FIELDS.ID);
 
-                    run.printf(Locale.ENGLISH, "%s\tQ0\t%s\t%d\t%.6f\t%s%n", t.getQueryID(), docID, i, sd[i].score,
+                    run.printf(Locale.ENGLISH, " %s Q0 %s %d %.6f %s%n", t.getQueryID(), docID, i, sd[i].score,
                                runID);
                 }
 
@@ -351,18 +361,18 @@ public class Searcher {
 
         final String topics = "./input/English/Queries/train.tsv";
 
-        final String indexPath = "experiment/index-stop-nostem";
+        final String indexPath = "code/experiment/index-stop-stem";
 
-        final String runPath = "experiment";
+        final String runPath = "code/experiment";
 
         final String runID = "seupd2223-dards";
 
         final int maxDocsRetrieved = 1000;
 
         final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
-                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).build();
+                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).addTokenFilter(PorterStemFilterFactory.class).build();
 
-        Searcher s = new Searcher(a, new BM25Similarity(), indexPath, topics, 50, runID, runPath, maxDocsRetrieved);
+        Searcher s = new Searcher(a, new BM25Similarity(), indexPath, topics, 672, runID, runPath, maxDocsRetrieved);
 
         s.search();
 
