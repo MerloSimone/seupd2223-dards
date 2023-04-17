@@ -361,16 +361,16 @@ public class Searcher {
 
         final String topics = "./input/English/Queries/train.tsv";
 
-        final String indexPath = "code/experiment/index-stop-stem";
+        final String indexPath = "experiment/index-stop-nostem";
 
-        final String runPath = "code/experiment";
+        final String runPath = "experiment";
 
         final String runID = "seupd2223-dards";
 
         final int maxDocsRetrieved = 1000;
 
         final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
-                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).addTokenFilter(PorterStemFilterFactory.class).build();
+                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).build();
 
         Searcher s = new Searcher(a, new BM25Similarity(), indexPath, topics, 672, runID, runPath, maxDocsRetrieved);
 
