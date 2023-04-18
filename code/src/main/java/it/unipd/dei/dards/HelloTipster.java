@@ -23,9 +23,14 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
+import org.apache.lucene.analysis.en.EnglishMinimalStemFilterFactory;
+import org.apache.lucene.analysis.en.KStemFilterFactory;
+import org.apache.lucene.analysis.en.PorterStemFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
-import org.apache.lucene.search.similarities.BM25Similarity;
-import org.apache.lucene.search.similarities.Similarity;
+import org.apache.lucene.search.similarities.*;
+import org.apache.lucene.search.similarities.LMSimilarity.CollectionModel;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * Introductory example on how to use <a href="https://lucene.apache.org/" target="_blank">Apache Lucene</a> to index
@@ -48,15 +53,16 @@ public class HelloTipster {
 
         final int ramBuffer = 256;
         final String docsPath = "./input/English/Documents/Trec";
-        final String indexPath = "experiment/index-stop-nostem";
+        final String indexPath = "experiment/index-stop-stem";
 
         final String extension = "txt";
-        final int expectedDocs = 528155;
-        final String charsetName = "ISO-8859-1";
+        final int expectedDocs = 1570734;
+        final String charsetName = StandardCharsets.UTF_8.name(); //"ISO-8859-1";
 
         final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
-                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).build();
+                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).addTokenFilter(KStemFilterFactory.class).build();
 
+        //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new DFRSimilarity(new BasicModelIne(), new AfterEffectL(), new NormalizationH2(0.9F))});
         final Similarity sim = new BM25Similarity();
 
         final String topics = "./input/English/Queries/train.tsv";

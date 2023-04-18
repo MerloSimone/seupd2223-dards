@@ -24,10 +24,7 @@ import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
-import org.apache.lucene.analysis.en.EnglishPossessiveFilter;
-import org.apache.lucene.analysis.en.EnglishPossessiveFilterFactory;
-import org.apache.lucene.analysis.en.PorterStemFilter;
-import org.apache.lucene.analysis.en.PorterStemFilterFactory;
+import org.apache.lucene.analysis.en.*;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 
@@ -73,7 +70,7 @@ public class BaseAnalyzer extends Analyzer {
 
         //tokens = new EnglishMinimalStemFilter(tokens);
         //tokens = new PorterStemFilter(tokens);
-        // tokens = new KStemFilter(tokens);
+        tokens = new KStemFilter(tokens);
         // tokens = new LovinsStemFilter(tokens);
 
         //tokens = new NGramTokenFilter(tokens, 3);

@@ -21,6 +21,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
+import org.apache.lucene.analysis.en.KStemFilterFactory;
 import org.apache.lucene.analysis.en.PorterStemFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.benchmark.quality.QualityQuery;
@@ -30,8 +31,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.QueryParserBase;
 import org.apache.lucene.search.*;
-import org.apache.lucene.search.similarities.BM25Similarity;
-import org.apache.lucene.search.similarities.Similarity;
+import org.apache.lucene.search.similarities.*;
 import org.apache.lucene.store.FSDirectory;
 
 import java.io.BufferedReader;
@@ -361,7 +361,7 @@ public class Searcher {
 
         final String topics = "./input/English/Queries/train.tsv";
 
-        final String indexPath = "experiment/index-stop-nostem";
+        final String indexPath = "experiment/index-stop-stem";
 
         final String runPath = "experiment";
 
@@ -370,9 +370,12 @@ public class Searcher {
         final int maxDocsRetrieved = 1000;
 
         final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
-                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).build();
+                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).addTokenFilter(KStemFilterFactory.class).build();
 
-        Searcher s = new Searcher(a, new BM25Similarity(), indexPath, topics, 672, runID, runPath, maxDocsRetrieved);
+        //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new DFRSimilarity(new BasicModelIne(), new AfterEffectL(), new NormalizationH2(0.9F))});
+        final Similarity sim = new BM25Similarity();
+
+        Searcher s = new Searcher(a, sim, indexPath, topics, 672, runID, runPath, maxDocsRetrieved);
 
         s.search();
 
