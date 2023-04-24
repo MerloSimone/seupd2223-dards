@@ -16,6 +16,7 @@
 package it.unipd.dei.dards;
 
 
+import it.unipd.dei.dards.analysis.MyFrenchAnalyzer;
 import it.unipd.dei.dards.index.DirectoryIndexer;
 import it.unipd.dei.dards.parse.TipsterParser;
 import it.unipd.dei.dards.search.Searcher;
@@ -23,12 +24,10 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
-import org.apache.lucene.analysis.en.EnglishMinimalStemFilterFactory;
 import org.apache.lucene.analysis.en.KStemFilterFactory;
-import org.apache.lucene.analysis.en.PorterStemFilterFactory;
+import org.apache.lucene.analysis.fr.FrenchAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.search.similarities.*;
-import org.apache.lucene.search.similarities.LMSimilarity.CollectionModel;
 
 import java.nio.charset.StandardCharsets;
 
@@ -40,7 +39,7 @@ import java.nio.charset.StandardCharsets;
  * @version 1.0
  * @since 1.0
  */
-public class HelloTipster {
+public class HelloFrench {
 
     /**
      * Main method of the class.
@@ -52,28 +51,29 @@ public class HelloTipster {
     public static void main(String[] args) throws Exception {
 
         final int ramBuffer = 256;
-        final String docsPath = "./input/English/Documents/Trec";
-        final String indexPath = "experiment/index-stop-stem";
+        final String docsPath = "./input/French/Documents/Trec";
+        final String indexPath = "code/experiment/index-base-french";
 
         final String extension = "txt";
         final int expectedDocs = 1570734;
         final String charsetName = StandardCharsets.UTF_8.name(); //"ISO-8859-1";
 
-        final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
-                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).addTokenFilter(KStemFilterFactory.class).build();
+        //final Analyzer a = new FrenchAnalyzer();
+
+        final Analyzer a = new MyFrenchAnalyzer();
 
         //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new DFRSimilarity(new BasicModelIne(), new AfterEffectL(), new NormalizationH2(0.9F))});
         final Similarity sim = new BM25Similarity();
 
-        final String topics = "./input/English/Queries/train.tsv";
+        final String topics = "./input/French/Queries/train.tsv";
 
-        final String runPath = "experiment";
+        final String runPath = "code/experiment";
 
         final String runID = "seupd2223-dards";
 
         final int maxDocsRetrieved = 1000;
 
-        final int expectedTopics = 50;
+        final int expectedTopics = 672;
 
         // indexing
         final DirectoryIndexer i = new DirectoryIndexer(a, sim, ramBuffer, indexPath, docsPath, extension, charsetName,
