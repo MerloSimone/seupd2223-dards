@@ -49,6 +49,7 @@ public final class OpenNLPNERFilter extends TokenFilter {
 	 * The classes of relevant {@code Attribute}s of a token
 	 */
 	private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
+	private final KeywordAttribute keyAtt = addAttribute(KeywordAttribute.class);
 	private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
 	private final PositionIncrementAttribute posIncrAtt = addAttribute(PositionIncrementAttribute.class);
 	private final PositionLengthAttribute posLenAtt = addAttribute(PositionLengthAttribute.class);
