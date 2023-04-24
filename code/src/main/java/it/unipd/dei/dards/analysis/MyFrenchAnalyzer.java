@@ -16,21 +16,21 @@
 
 package it.unipd.dei.dards.analysis;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.LowerCaseFilter;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.*;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.en.*;
+import org.apache.lucene.analysis.fr.FrenchLightStemFilter;
 import org.apache.lucene.analysis.fr.FrenchMinimalStemFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.apache.lucene.analysis.util.ElisionFilter;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 
 import static it.unipd.dei.dards.analysis.AnalyzerUtil.consumeTokenStream;
 import static it.unipd.dei.dards.analysis.AnalyzerUtil.loadStopList;
@@ -58,9 +58,12 @@ public class MyFrenchAnalyzer extends Analyzer {
         final Tokenizer source = new StandardTokenizer();
 
 
-        TokenStream tokens = new LowerCaseFilter(source);
+
+        TokenStream  tokens= new ElisionFilter(source, loadStopList("french-arcticles.txt"));
+        tokens = new LowerCaseFilter(tokens);
         tokens = new StopFilter(tokens, loadStopList("stopwords-fr.txt"));
-        tokens = new FrenchMinimalStemFilter(tokens);
+        //tokens = new FrenchMinimalStemFilter(tokens);
+        tokens=new FrenchLightStemFilter(tokens);
 
 
         return new TokenStreamComponents(source, tokens);
