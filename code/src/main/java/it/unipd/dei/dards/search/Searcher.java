@@ -200,7 +200,7 @@ public class Searcher {
             topics = new QualityQuery[allRows.size()]; //TODO: PLACEHOLDER
 
             int i = 0;
-            HashMap<String, String> StringMap = new HashMap<>();
+            HashMap<String, String> StringMap;
             System.out.printf("%n#### Parsing queries ####%n");
             for (String[] row: allRows){
                 StringMap = new HashMap<>();

@@ -30,6 +30,13 @@
 			<organizationUrl>http://dei.unipd.it/</organizationUrl>
 		</developer>
 		<developer>
+			<id>dan</id>
+			<name>Daniel Carlesso</name>
+			<email>daniel.carlesso@studenti.unipd.it</email>
+			<organization>University of Padua, Italy</organization>
+			<organizationUrl>http://dei.unipd.it/</organizationUrl>
+		</developer>
+		<developer>
 			<id>pc</id>
 			<name>placeholder</name>
 			<email>placeholder@dei.unipd.it</email>
