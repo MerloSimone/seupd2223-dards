@@ -9,6 +9,6 @@ war, battle, fight
 weather, climate
 job, work
 diatomaceous, grain, supplement, insecticide
-
-teh => the
+oil, gas oil, diesel, fuel
+energie => energies
 loa => loan

@@ -30,9 +30,11 @@ import org.apache.lucene.analysis.miscellaneous.HyphenatedWordsFilterFactory;
 import org.apache.lucene.analysis.miscellaneous.WordDelimiterGraphFilterFactory;
 import org.apache.lucene.analysis.ngram.NGramFilterFactory;
 import org.apache.lucene.analysis.ngram.NGramTokenizerFactory;
+import org.apache.lucene.analysis.opennlp.OpenNLPLemmatizerFilterFactory;
 import org.apache.lucene.analysis.opennlp.OpenNLPPOSFilterFactory;
 import org.apache.lucene.analysis.opennlp.OpenNLPTokenizerFactory;
 import org.apache.lucene.analysis.path.PathHierarchyTokenizerFactory;
+import org.apache.lucene.analysis.pattern.PatternReplaceFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.analysis.synonym.SynonymGraphFilterFactory;
@@ -196,13 +198,16 @@ public class BaseAnalyzer extends Analyzer {
                 "Thank you in advance!\n" +
                 "Your e-mail address will not be published.\n" +
                 "Mandatory fields are indicated\n" +
-                "with * paintbrushes\n";
+                "with * paintbrushes e-mail\n";
 
         // use the analyzer to process the text and print diagnostic information about each token
         //consumeTokenStream(new BaseAnalyzer(), text);
 
-        final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class)
+        final Analyzer a = CustomAnalyzer.builder().withTokenizer(WhitespaceTokenizerFactory.class)
                 .addTokenFilter(LowerCaseFilterFactory.class)
+                //.addTokenFilter(HyphenatedWordsFilterFactory.class)
+                .addTokenFilter(PatternReplaceFilterFactory.NAME, "pattern", "[\\p{Punct}&&[^-]]")
+                .addTokenFilter(OpenNLPLemmatizerFilterFactory.class, "lemmatizerModel", "en-lemmatizer.bin")
                 .addTokenFilter(StopFilterFactory.class)
                 .addTokenFilter(KStemFilterFactory.class)
                 //.addTokenFilter(NGramFilterFactory.NAME, "minGramSize", "3", "maxGramSize", "10")

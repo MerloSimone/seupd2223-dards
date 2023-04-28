@@ -312,7 +312,6 @@ public class Searcher {
         String docID = null;
 
         try {
-
             for (QualityQuery t : topics) {
 
                 System.out.printf(" Searching for topic %s | %s .%n", t.getQueryID(), t.getValue(TOPIC_FIELDS.TITLE));

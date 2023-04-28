@@ -25,6 +25,7 @@ import org.apache.lucene.analysis.commongrams.CommonGramsQueryFilterFactory;
 import org.apache.lucene.analysis.core.FlattenGraphFilterFactory;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
+import org.apache.lucene.analysis.core.WhitespaceTokenizerFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.en.AbstractWordsFileFilterFactory;
 import org.apache.lucene.analysis.en.EnglishMinimalStemFilterFactory;
@@ -34,6 +35,8 @@ import org.apache.lucene.analysis.miscellaneous.HyphenatedWordsFilterFactory;
 import org.apache.lucene.analysis.miscellaneous.LengthFilter;
 import org.apache.lucene.analysis.miscellaneous.LengthFilterFactory;
 import org.apache.lucene.analysis.ngram.NGramFilterFactory;
+import org.apache.lucene.analysis.opennlp.OpenNLPLemmatizerFilterFactory;
+import org.apache.lucene.analysis.pattern.PatternReplaceFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.analysis.synonym.SynonymFilterFactory;
 import org.apache.lucene.analysis.synonym.SynonymGraphFilterFactory;
@@ -70,22 +73,26 @@ public class HelloTipster {
 
         final String extension = "txt";
         final int expectedDocs = 1570734;
-        final String charsetName = StandardCharsets.UTF_8.name(); //"ISO-8859-1";
+        final String charsetName = StandardCharsets.UTF_8.name();
 
         final Analyzer a_docs = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class)
                 .addTokenFilter(LowerCaseFilterFactory.class)
+                //.addTokenFilter(PatternReplaceFilterFactory.NAME, "pattern", "[\\p{Punct}&&[^-]]")
                 .addTokenFilter(StopFilterFactory.class)
+                //.addTokenFilter(OpenNLPLemmatizerFilterFactory.NAME, "lemmatizerModel", "en-lemmatizer.bin")
                 .addTokenFilter(KStemFilterFactory.class)
                 //.addTokenFilter(NGramFilterFactory.NAME, "minGramSize", "3", "maxGramSize", "10")
                 .build();
 
         final Analyzer a_query = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class)
                 .addTokenFilter(LowerCaseFilterFactory.class)
+                //.addTokenFilter(PatternReplaceFilterFactory.NAME, "pattern", "[\\p{Punct}&&[^-]]")
                 .addTokenFilter(StopFilterFactory.class)
-                .addTokenFilter(KStemFilterFactory.class)
                 //.addTokenFilter(NGramFilterFactory.NAME, "minGramSize", "3", "maxGramSize", "10")
-                //.addTokenFilter(SynonymGraphFilterFactory.NAME, "synonyms", "src/main/resources/synonyms.txt")
+                //.addTokenFilter(SynonymGraphFilterFactory.NAME, "synonyms", "synonyms_en.txt")
                 //.addTokenFilter(FlattenGraphFilterFactory.class)  //SynonymGraphFilter must be followed by FlattenGraphFilter
+                //.addTokenFilter(OpenNLPLemmatizerFilterFactory.NAME, "lemmatizerModel", "en-lemmatizer.bin")
+                .addTokenFilter(KStemFilterFactory.class)
                 //.addTokenFilter(Word2VecSynonymFilter.NAME, "model", "<model_file>")  //Sease filter based on deeplearning4j
                 .build();
 
@@ -110,7 +117,6 @@ public class HelloTipster {
         // searching
         final Searcher s = new Searcher(a_query, sim, indexPath, topics, expectedTopics, runID, runPath, maxDocsRetrieved);
         s.search();
-
     }
 
 }
