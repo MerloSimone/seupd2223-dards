@@ -24,6 +24,10 @@ import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.en.*;
 import org.apache.lucene.analysis.fr.FrenchLightStemFilter;
 import org.apache.lucene.analysis.fr.FrenchMinimalStemFilter;
+import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
+import org.apache.lucene.analysis.miscellaneous.KeywordMarkerFilter;
+import org.apache.lucene.analysis.shingle.ShingleFilter;
+import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.analysis.util.ElisionFilter;
@@ -62,8 +66,15 @@ public class MyFrenchAnalyzer extends Analyzer {
         TokenStream  tokens= new ElisionFilter(source, loadStopList("french-arcticles.txt"));
         tokens = new LowerCaseFilter(tokens);
         tokens = new StopFilter(tokens, loadStopList("stopwords-fr.txt"));
-        //tokens = new FrenchMinimalStemFilter(tokens);
-        tokens=new FrenchLightStemFilter(tokens);
+        tokens = new ASCIIFoldingFilter(tokens); //needed because of the french accents
+        //tokens = new FrenchMinimalStemFilter(tokens); //the worst
+
+
+        tokens=new FrenchLightStemFilter(tokens); //20 map
+        //tokens=new SnowballFilter(tokens,"French");//18 map
+        //tokens = new ShingleFilter(tokens, 3); //worse
+
+
 
 
         return new TokenStreamComponents(source, tokens);

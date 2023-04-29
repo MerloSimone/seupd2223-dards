@@ -62,8 +62,8 @@ public class HelloFrench {
 
         final Analyzer a = new MyFrenchAnalyzer();
 
-        //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new DFRSimilarity(new BasicModelIne(), new AfterEffectL(), new NormalizationH2(0.9F))});
-        final Similarity sim = new BM25Similarity();
+        //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new ClassicSimilarity()});
+        final Similarity sim = new BM25Similarity();//try to personalize parameters
 
         final String topics = "./input/French/Queries/train.tsv";
 
