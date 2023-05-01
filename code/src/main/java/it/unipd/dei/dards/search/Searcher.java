@@ -310,6 +310,7 @@ public class Searcher {
         TopDocs docs = null;
         ScoreDoc[] sd = null;
         String docID = null;
+        MyQueryRescorer qr= null;
 
         try {
 
@@ -325,6 +326,10 @@ public class Searcher {
                 q = bq.build();
 
                 docs = searcher.search(q, maxDocsRetrieved);
+
+                //rescoring the query
+                qr= new MyQueryRescorer(0.5f,q);
+                docs=qr.rescore(searcher,docs,100);
 
                 sd = docs.scoreDocs;
 

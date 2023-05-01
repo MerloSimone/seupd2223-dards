@@ -27,6 +27,7 @@ import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.en.KStemFilterFactory;
 import org.apache.lucene.analysis.fr.FrenchAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.apache.lucene.search.Rescorer;
 import org.apache.lucene.search.similarities.*;
 
 import java.nio.charset.StandardCharsets;
@@ -69,7 +70,7 @@ public class HelloFrench {
 
         final String runPath = "code/experiment";
 
-        final String runID = "seupd2223-dards";
+        final String runID = "seupd2223-dards-rescored";
 
         final int maxDocsRetrieved = 1000;
 
@@ -83,6 +84,7 @@ public class HelloFrench {
         // searching
         final Searcher s = new Searcher(a, sim, indexPath, topics, expectedTopics, runID, runPath, maxDocsRetrieved);
         s.search();
+
 
     }
 
