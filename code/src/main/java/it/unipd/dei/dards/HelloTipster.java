@@ -69,7 +69,7 @@ public class HelloTipster {
 
         final int ramBuffer = 256;
         final String docsPath = "./input/English/Documents/Trec";
-        final String indexPath = "experiment/index-stop-stem";
+        final String indexPath = "code/experiment/index-stop-stem";
 
         final String extension = "txt";
         final int expectedDocs = 1570734;
@@ -77,7 +77,7 @@ public class HelloTipster {
 
         final Analyzer a_docs = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class)
                 .addTokenFilter(LowerCaseFilterFactory.class)
-                //.addTokenFilter(PatternReplaceFilterFactory.NAME, "pattern", "[\\p{Punct}&&[^-]]")
+                .addTokenFilter(PatternReplaceFilterFactory.NAME, "pattern", "[\\p{Punct}&&[^-]]")
                 .addTokenFilter(StopFilterFactory.class)
                 //.addTokenFilter(OpenNLPLemmatizerFilterFactory.NAME, "lemmatizerModel", "en-lemmatizer.bin")
                 .addTokenFilter(KStemFilterFactory.class)
@@ -86,7 +86,7 @@ public class HelloTipster {
 
         final Analyzer a_query = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class)
                 .addTokenFilter(LowerCaseFilterFactory.class)
-                //.addTokenFilter(PatternReplaceFilterFactory.NAME, "pattern", "[\\p{Punct}&&[^-]]")
+                .addTokenFilter(PatternReplaceFilterFactory.NAME, "pattern", "[\\p{Punct}&&[^-]]")
                 .addTokenFilter(StopFilterFactory.class)
                 //.addTokenFilter(NGramFilterFactory.NAME, "minGramSize", "3", "maxGramSize", "10")
                 //.addTokenFilter(SynonymGraphFilterFactory.NAME, "synonyms", "synonyms_en.txt")
@@ -101,7 +101,7 @@ public class HelloTipster {
 
         final String topics = "./input/English/Queries/train.tsv";
 
-        final String runPath = "experiment";
+        final String runPath = "code/experiment";
 
         final String runID = "seupd2223-dards";
 

@@ -17,12 +17,14 @@
 package it.unipd.dei.dards.search;
 
 import it.unipd.dei.dards.parse.ParsedDocument;
+import it.unipd.dei.dards.utils.TranslationScript;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.en.KStemFilterFactory;
 import org.apache.lucene.analysis.en.PorterStemFilterFactory;
+import org.apache.lucene.analysis.pattern.PatternReplaceFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.benchmark.quality.QualityQuery;
 import org.apache.lucene.index.DirectoryReader;
@@ -44,6 +46,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
@@ -203,10 +206,16 @@ public class Searcher {
             HashMap<String, String> StringMap;
             System.out.printf("%n#### Parsing queries ####%n");
             for (String[] row: allRows){
+                String translatedQuery="";
                 StringMap = new HashMap<>();
-                StringMap.put(TOPIC_FIELDS.TITLE, row[1]);
+                try{
+                    translatedQuery= TranslationScript.translate("fr","en",row[1]); //translating the query
+                }catch (Exception e){
+                    translatedQuery=row[1];
+                }
+                StringMap.put(TOPIC_FIELDS.TITLE, translatedQuery); //adding the translated query
                 topics[i] = new QualityQuery(row[0], StringMap);
-                System.out.printf("%d/%d: %s | %s\n",i+1, expectedTopics, topics[i].getQueryID(), topics[i].getValue(TOPIC_FIELDS.TITLE));
+                System.out.printf("%d/%d: %s | %s | %s\n",i+1, expectedTopics, topics[i].getQueryID(), topics[i].getValue(TOPIC_FIELDS.TITLE),row[1]);
 //                System.out.println("id: "+row[0]+" query: "+row[1]+" \n");
                 i++;
             }
@@ -358,19 +367,27 @@ public class Searcher {
      */
     public static void main(String[] args) throws Exception {
 
-        final String topics = "./input/English/Queries/train.tsv";
+        final String topics = "./input/French/Queries/train.tsv";
 
-        final String indexPath = "experiment/index-stop-stem";
+        final String indexPath = "code/experiment/index-stop-stem";
 
-        final String runPath = "experiment";
+        final String runPath = "code/experiment";
 
-        final String runID = "seupd2223-dards";
+        final String runID = "seupd2223-dards-transquery";
 
         final int maxDocsRetrieved = 1000;
 
-        final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
-                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).addTokenFilter(KStemFilterFactory.class).build();
-
+        final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class)
+                .addTokenFilter(LowerCaseFilterFactory.class)
+                .addTokenFilter(PatternReplaceFilterFactory.NAME, "pattern", "[\\p{Punct}&&[^-]]")
+                .addTokenFilter(StopFilterFactory.class)
+                //.addTokenFilter(NGramFilterFactory.NAME, "minGramSize", "3", "maxGramSize", "10")
+                //.addTokenFilter(SynonymGraphFilterFactory.NAME, "synonyms", "synonyms_en.txt")
+                //.addTokenFilter(FlattenGraphFilterFactory.class)  //SynonymGraphFilter must be followed by FlattenGraphFilter
+                //.addTokenFilter(OpenNLPLemmatizerFilterFactory.NAME, "lemmatizerModel", "en-lemmatizer.bin")
+                .addTokenFilter(KStemFilterFactory.class)
+                //.addTokenFilter(Word2VecSynonymFilter.NAME, "model", "<model_file>")  //Sease filter based on deeplearning4j
+                .build();
         //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new DFRSimilarity(new BasicModelIne(), new AfterEffectL(), new NormalizationH2(0.9F))});
         final Similarity sim = new BM25Similarity();
 

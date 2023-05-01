@@ -1,4 +1,4 @@
-package it.unipd.dei.dards;
+package it.unipd.dei.dards.utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -6,14 +6,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-public class TranslationTestClass {
+public class TranslationScript {
 
     public static void main(String[] args) throws IOException {
         String text = "piquet de terre";
         System.out.println("Translated text: " + translate("fr", "en", text));
     }
 
-    private static String translate(String langFrom, String langTo, String text) throws IOException {
+    public static String translate(String langFrom, String langTo, String text) throws IOException {
         // INSERT YOU URL HERE
         String urlStr = "https://script.google.com/macros/s/AKfycbzq2kAPMVypjdniez1vojiBbbxxGjtTr_CeXNNahqr9MnbH-qM0v94HOxH9wCr15M-5/exec" +
                 "?q=" + URLEncoder.encode(text, "UTF-8") +
