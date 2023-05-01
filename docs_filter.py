@@ -203,8 +203,8 @@ def add_useless_words(files):
 if __name__ == "__main__":
     try:
         # Files containing all words to ignore while parsing the documents
-        files = ["code\\src\\main\\resources\\stopwords-fr.txt",
-                 "code\\src\\main\\resources\\french-arcticles.txt"]
+        files = ["code\\src\\main\\resources\\stopwords-fr-002.txt",
+                 "code\\src\\main\\resources\\french-articles.txt"]
         
         # Adding words to ignore
         add_useless_words(files)
