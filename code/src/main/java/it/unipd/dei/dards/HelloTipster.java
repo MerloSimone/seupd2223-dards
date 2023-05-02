@@ -17,8 +17,10 @@ package it.unipd.dei.dards;
 
 
 import it.unipd.dei.dards.index.DirectoryIndexer;
+import it.unipd.dei.dards.index.myDirectoryIndexer;
 import it.unipd.dei.dards.parse.TipsterParser;
 import it.unipd.dei.dards.search.Searcher;
+import it.unipd.dei.dards.search.mySearcher;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.commongrams.CommonGramsFilterFactory;
 import org.apache.lucene.analysis.commongrams.CommonGramsQueryFilterFactory;
@@ -41,12 +43,19 @@ import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.analysis.synonym.SynonymFilterFactory;
 import org.apache.lucene.analysis.synonym.SynonymGraphFilterFactory;
 import org.apache.lucene.analysis.synonym.SynonymMap;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.search.similarities.*;
 import org.apache.lucene.search.similarities.LMSimilarity.CollectionModel;
 
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Introductory example on how to use <a href="https://lucene.apache.org/" target="_blank">Apache Lucene</a> to index
@@ -89,7 +98,7 @@ public class HelloTipster {
                 //.addTokenFilter(PatternReplaceFilterFactory.NAME, "pattern", "[\\p{Punct}&&[^-]]")
                 .addTokenFilter(StopFilterFactory.class)
                 //.addTokenFilter(NGramFilterFactory.NAME, "minGramSize", "3", "maxGramSize", "10")
-                //.addTokenFilter(SynonymGraphFilterFactory.NAME, "synonyms", "synonyms_en.txt")
+                //.addTokenFilter(SynonymGraphFilterFactory.NAME, "synonyms", "mySynonyms.txt")
                 //.addTokenFilter(FlattenGraphFilterFactory.class)  //SynonymGraphFilter must be followed by FlattenGraphFilter
                 //.addTokenFilter(OpenNLPLemmatizerFilterFactory.NAME, "lemmatizerModel", "en-lemmatizer.bin")
                 .addTokenFilter(KStemFilterFactory.class)
@@ -107,16 +116,57 @@ public class HelloTipster {
 
         final int maxDocsRetrieved = 1000;
 
-        final int expectedTopics = 50;
+        final int expectedTopics = 672;
 
-        // indexing
+        // first indexer
         final DirectoryIndexer i = new DirectoryIndexer(a_docs, sim, ramBuffer, indexPath, docsPath, extension, charsetName,
-                                                        expectedDocs, TipsterParser.class);
+                expectedDocs, TipsterParser.class);
         i.index();
 
-        // searching
+        // first searcher
         final Searcher s = new Searcher(a_query, sim, indexPath, topics, expectedTopics, runID, runPath, maxDocsRetrieved);
-        s.search();
+
+        final String reRankIndexPath = "experiment/reRank";
+        Document[] retrievedDocs = null;
+
+        // second indexer
+        final myDirectoryIndexer i_reRank = new myDirectoryIndexer(a_docs, sim, ramBuffer, reRankIndexPath, docsPath, extension, charsetName,
+                maxDocsRetrieved, TipsterParser.class);
+
+        //second searcher
+        final mySearcher s_reRank = new mySearcher(a_query, sim, reRankIndexPath, topics, expectedTopics, runID, runPath, maxDocsRetrieved);
+        /*PrintWriter run = new PrintWriter(Files.newBufferedWriter(Paths.get(runPath).resolve(runID + ".txt"),
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING,
+                StandardOpenOption.WRITE));
+        */
+        for(int topicIndex=0; topicIndex<expectedTopics; topicIndex++) {
+            // first search
+            retrievedDocs = s.search(topicIndex);
+
+            System.out.printf("\nRetrieved docs for topic %d: %d\n", topicIndex+1, retrievedDocs.length);
+
+            // second indexing
+            if(topicIndex != 0)     //if topicIndex = 0 then index empty
+                i_reRank.clearIndex();
+            i_reRank.index(retrievedDocs);
+
+            // second search
+            s_reRank.search(topicIndex);
+
+            /*for(String doc : bestDocs)
+                if(doc != null)
+                    run.printf(Locale.ENGLISH, doc);
+
+            run.flush();
+             */
+        }
+
+        s.closeResources();
+        i_reRank.closeResources();
+        s_reRank.closeResources();
+        //run.close();
     }
 
 }

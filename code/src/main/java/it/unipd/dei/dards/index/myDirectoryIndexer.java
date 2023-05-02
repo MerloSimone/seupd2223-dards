@@ -28,9 +28,7 @@ import org.apache.lucene.analysis.en.PorterStemFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StringField;
-import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.search.similarities.*;
@@ -51,7 +49,7 @@ import java.util.LinkedHashSet;
  * @version 1.00
  * @since 1.00
  */
-public class DirectoryIndexer {
+public class myDirectoryIndexer {
 
     /**
      * One megabyte
@@ -61,7 +59,7 @@ public class DirectoryIndexer {
     /**
      * The index writer.
      */
-    private final IndexWriter writer;
+    private IndexWriter writer;
 
     /**
      * The class of the {@code DocumentParser} to be used.
@@ -91,7 +89,7 @@ public class DirectoryIndexer {
     /**
      * The start instant of the indexing.
      */
-    private final long start;
+    private long start;
 
     /**
      * The total number of indexed files.
@@ -107,6 +105,7 @@ public class DirectoryIndexer {
      * The total number of indexed bytes
      */
     private long bytesCount;
+
 
     /**
      * Creates a new indexer.
@@ -124,7 +123,7 @@ public class DirectoryIndexer {
      * @throws NullPointerException     if any of the parameters is {@code null}.
      * @throws IllegalArgumentException if any of the parameters assumes invalid values.
      */
-    public DirectoryIndexer(final Analyzer analyzer, final Similarity similarity, final int ramBufferSizeMB,
+    public myDirectoryIndexer(final Analyzer analyzer, final Similarity similarity, final int ramBufferSizeMB,
                             final String indexPath, final String docsPath, final String extension,
                             final String charsetName, final long expectedDocs,
                             final Class<? extends DocumentParser> dpCls) {
@@ -171,7 +170,7 @@ public class DirectoryIndexer {
             } catch (Exception e) {
                 throw new IllegalArgumentException(
                         String.format("Unable to create directory %s: %s.", indexDir.toAbsolutePath().toString(),
-                                      e.getMessage()), e);
+                                e.getMessage()), e);
             }
         }
 
@@ -182,7 +181,7 @@ public class DirectoryIndexer {
 
         if (!Files.isDirectory(indexDir)) {
             throw new IllegalArgumentException(String.format("%s expected to be a directory where to write the index.",
-                                                             indexDir.toAbsolutePath().toString()));
+                    indexDir.toAbsolutePath().toString()));
         }
 
         if (docsPath == null) {
@@ -246,11 +245,8 @@ public class DirectoryIndexer {
             writer = new IndexWriter(FSDirectory.open(indexDir), iwc);
         } catch (IOException e) {
             throw new IllegalArgumentException(String.format("Unable to create the index writer in directory %s: %s.",
-                                                             indexDir.toAbsolutePath().toString(), e.getMessage()), e);
+                    indexDir.toAbsolutePath().toString(), e.getMessage()), e);
         }
-
-        this.start = System.currentTimeMillis();
-
     }
 
     /**
@@ -258,69 +254,43 @@ public class DirectoryIndexer {
      *
      * @throws IOException if something goes wrong while indexing.
      */
-    public void index() throws IOException {
+    public void index(Document[] retrievedDocs) throws IOException {
+
+        start = System.currentTimeMillis();
 
         System.out.printf("%n#### Start indexing ####%n");
 
-        Files.walkFileTree(docsDir, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                if (file.getFileName().toString().endsWith(extension)) {
+        docsCount = 0;
 
-                    DocumentParser dp = DocumentParser.create(dpCls, Files.newBufferedReader(file, cs));
+        for (Document doc : retrievedDocs) {
+            if (doc == null)
+                continue;
 
-                    bytesCount += Files.size(file);
+            writer.addDocument(doc);
 
-                    filesCount += 1;
-
-                    Document doc = null;
-
-                    for (ParsedDocument pd : dp) {
-
-                        doc = new Document();
-
-                        // add the document identifier
-                        doc.add(new StringField(ParsedDocument.FIELDS.ID, pd.getIdentifier(), Field.Store.YES));
-
-                        // add the document body
-                        FieldType type = new FieldType();
-                        type.setStored(true);
-                        type.setIndexOptions(IndexOptions.DOCS);
-                        doc.add(new Field("body", pd.getBody(), type));
-
-                        //System.out.println(pd.getIdentifier());
-                        //System.out.println(pd.getBody());
-
-                        writer.addDocument(doc);
-
-                        docsCount++;
-
-
-                        // print progress every 10000 indexed documents
-                        if (docsCount % 10000 == 0) {
-                            System.out.printf("%d document(s) (%d files, %d Mbytes) indexed in %d seconds.%n",
-                                    docsCount, filesCount, bytesCount / MBYTE,
-                                    (System.currentTimeMillis() - start) / 1000);
-                        }
-
-                    }
-                }
-                return FileVisitResult.CONTINUE;
-            }
-        });
+            docsCount++;
+        }
 
         writer.commit();
 
-        writer.close();
-
-        if (docsCount != expectedDocs) {
-            System.out.printf("Expected to index %d documents; %d indexed instead.%n", expectedDocs, docsCount);
-        }
-
-        System.out.printf("%d document(s) (%d files, %d Mbytes) indexed in %d seconds.%n", docsCount, filesCount,
-                          bytesCount / MBYTE, (System.currentTimeMillis() - start) / 1000);
+        System.out.printf(" %d document(s) indexed in %d milliseconds.%n",
+                (int) docsCount, System.currentTimeMillis() - start);
 
         System.out.printf("#### Indexing complete ####%n");
+    }
+
+    /**
+     * Closes the open resources.
+     *
+     * @throws IOException if something goes wrong while closing the writer.
+     */
+    public void closeResources() throws IOException {
+        writer.close();
+    }
+
+    public void clearIndex() throws IOException {
+        writer.deleteAll();
+        writer.commit();
     }
 
     /**
@@ -350,10 +320,10 @@ public class DirectoryIndexer {
         list.add(new String[]{"doc062200100001", "doc062200100005", "doc062200100007"});
         list.add(new String[]{"doc062200100001", "doc062200100008", "doc062200100012"});
 
-        DirectoryIndexer i = new DirectoryIndexer(a, sim, ramBuffer, indexPath, docsPath, extension,
-                                                  charsetName, expectedDocs, TipsterParser.class);
+        myDirectoryIndexer i = new myDirectoryIndexer(a, sim, ramBuffer, indexPath, docsPath, extension,
+                charsetName, expectedDocs, TipsterParser.class);
 
-        i.index();
+        i.index(null);
 
 
     }

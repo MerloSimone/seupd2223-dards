@@ -76,7 +76,7 @@ public class HelloTipster_testSimilarities {
 
             // searching
             final Searcher s = new Searcher(a_query, sim[k], indexPath, topics, expectedTopics, runID, runPath, maxDocsRetrieved);
-            s.search();
+            s.search(0);
         }
     }
 

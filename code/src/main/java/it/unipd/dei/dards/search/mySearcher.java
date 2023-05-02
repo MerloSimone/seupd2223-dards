@@ -16,7 +16,6 @@
 
 package it.unipd.dei.dards.search;
 
-import it.unipd.dei.dards.index.BodyField;
 import it.unipd.dei.dards.parse.ParsedDocument;
 import opennlp.tools.dictionary.Index;
 import org.apache.lucene.analysis.Analyzer;
@@ -27,12 +26,7 @@ import org.apache.lucene.analysis.en.KStemFilterFactory;
 import org.apache.lucene.analysis.en.PorterStemFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.benchmark.quality.QualityQuery;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
-import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -62,7 +56,7 @@ import com.univocity.parsers.tsv.TsvParserSettings;
  * @version 1.00
  * @since 1.00
  */
-public class Searcher {
+public class mySearcher {
 
     /**
      * The fields of the typical TREC topics.
@@ -130,6 +124,16 @@ public class Searcher {
      */
     private long elapsedTime = Long.MIN_VALUE;
 
+    /**
+     * List containing retrieved docs for every topic.
+     */
+    private String[] bestDocs;
+
+    /**
+     * Flag to command retrievedDocs usage
+     */
+    private boolean isNull = false;
+
 
     /**
      * Creates a new searcher.
@@ -142,11 +146,10 @@ public class Searcher {
      * @param runID            the identifier of the run to be created.
      * @param runPath          the path where to store the run.
      * @param maxDocsRetrieved the maximum number of documents to be retrieved.
-     *
      * @throws NullPointerException     if any of the parameters is {@code null}.
      * @throws IllegalArgumentException if any of the parameters assumes invalid values.
      */
-    public Searcher(final Analyzer analyzer, final Similarity similarity, final String indexPath,
+    public mySearcher(final Analyzer analyzer, final Similarity similarity, final String indexPath,
                     final String topicsFile, final int expectedTopics, final String runID, final String runPath,
                     final int maxDocsRetrieved) {
 
@@ -198,8 +201,6 @@ public class Searcher {
         try {
             BufferedReader in = Files.newBufferedReader(Paths.get(topicsFile), StandardCharsets.UTF_8);
 
-            //topics = new TrecTopicsReader().readQueries(in);
-            //topics = array QualityQuery[].
             TsvParserSettings settings = new TsvParserSettings();
             settings.getFormat().setLineSeparator("\n");
             TsvParser parser = new TsvParser(settings);
@@ -215,12 +216,8 @@ public class Searcher {
                 StringMap.put(TOPIC_FIELDS.TITLE, row[1]);
                 topics[i] = new QualityQuery(row[0], StringMap);
                 System.out.printf("%d/%d: %s | %s\n",i+1, expectedTopics, topics[i].getQueryID(), topics[i].getValue(TOPIC_FIELDS.TITLE));
-//                System.out.println("id: "+row[0]+" query: "+row[1]+" \n");
                 i++;
             }
-
-            //for(int j=0; j<topics.length; j++) System.out.println("!! "+topics[j].getQueryID()+" | "+topics[j].getValue(TOPIC_FIELDS.TITLE));
-            //for(QualityQuery t: topics) System.out.println("--"+t.getQueryID()+" | "+t.getValue(TOPIC_FIELDS.TITLE));
 
             in.close();
         } catch (IOException e) {
@@ -286,6 +283,9 @@ public class Searcher {
         }
 
         this.maxDocsRetrieved = maxDocsRetrieved;
+
+        this.bestDocs = new String[maxDocsRetrieved];
+
     }
 
     /**
@@ -304,24 +304,22 @@ public class Searcher {
      * @throws IOException    if something goes wrong while searching.
      * @throws ParseException if something goes wrong while parsing topics.
      */
-    public Document[] search(int topicIndex) throws IOException, ParseException {
+    public void search(int topicIndex) throws IOException, ParseException {
 
-        System.out.printf("%n#### Start first searching ####%n");
+        System.out.printf("%n#### Start second searching ####%n");
 
         // the start time of the searching
         final long start = System.currentTimeMillis();
 
         final Set<String> idField = new HashSet<>();
         idField.add(ParsedDocument.FIELDS.ID);
-        idField.add(ParsedDocument.FIELDS.BODY);
 
         BooleanQuery.Builder bq = null;
         Query q = null;
         TopDocs docs = null;
         ScoreDoc[] sd = null;
         String docID = null;
-        String docBody = null;
-        Document[] retrievedDocs = null;
+        //String[] bestDocs = null;
 
         try {
             QualityQuery t = topics[topicIndex];
@@ -331,7 +329,6 @@ public class Searcher {
             bq = new BooleanQuery.Builder();
 
             bq.add(qp.parse(QueryParserBase.escape(t.getValue(TOPIC_FIELDS.TITLE))), BooleanClause.Occur.SHOULD);
-            //bq.add(qp.parse(QueryParserBase.escape(t.getValue(TOPIC_FIELDS.DESCRIPTION))), BooleanClause.Occur.SHOULD);
 
             q = bq.build();
 
@@ -339,39 +336,28 @@ public class Searcher {
 
             sd = docs.scoreDocs;
 
-            retrievedDocs = new Document[maxDocsRetrieved];
+            //bestDocs = new String[maxDocsRetrieved];
 
             for (int i = 0, n = sd.length; i < n; i++) {
                 docID = reader.document(sd[i].doc, idField).get(ParsedDocument.FIELDS.ID);
-                docBody = reader.document(sd[i].doc, idField).get(ParsedDocument.FIELDS.BODY);
 
-                Document document = new Document();
+                //bestDocs[i] = String.format(" %s Q0 %s %d %.6f %s%n", t.getQueryID(), docID, i, sd[i].score, runID);
+                run.printf(" %s Q0 %s %d %.6f %s%n", t.getQueryID(), docID, i, sd[i].score, runID);
 
-                document.add(new StringField(ParsedDocument.FIELDS.ID, docID, Field.Store.YES));
-
-                FieldType type = new FieldType();
-                type.setStored(true);
-                type.setIndexOptions(IndexOptions.DOCS);
-                document.add(new Field("body", docBody, type));
-
-                retrievedDocs[i] = document;
-
-                //run.printf(Locale.ENGLISH, " %s Q0 %s %d %.6f %s%n", t.getQueryID(), docID, i, sd[i].score,
-                        //runID);
             }
 
-            //run.flush();
-        } finally {
+            run.flush();
+
+        }finally {
 
         }
 
         elapsedTime = System.currentTimeMillis() - start;
 
-        System.out.printf(" Topic %d searched in %d milliseconds.%n", topicIndex+1, elapsedTime);
-
+        System.out.printf(" Topic %d searched in %d ms.%n", topicIndex+1, elapsedTime);
         System.out.printf("#### Searching complete ####%n");
 
-        return retrievedDocs;
+        //return bestDocs;
     }
 
     /**
@@ -408,7 +394,7 @@ public class Searcher {
         //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new DFRSimilarity(new BasicModelIne(), new AfterEffectL(), new NormalizationH2(0.9F))});
         final Similarity sim = new BM25Similarity();
 
-        Searcher s = new Searcher(a, sim, indexPath, topics, 672, runID, runPath, maxDocsRetrieved);
+        mySearcher s = new mySearcher(a, sim, indexPath, topics, 672, runID, runPath, maxDocsRetrieved);
 
         s.search(0);
 
