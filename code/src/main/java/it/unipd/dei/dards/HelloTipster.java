@@ -135,17 +135,16 @@ public class HelloTipster {
 
         //second searcher
         final mySearcher s_reRank = new mySearcher(a_query, sim, reRankIndexPath, topics, expectedTopics, runID, runPath, maxDocsRetrieved);
-        /*PrintWriter run = new PrintWriter(Files.newBufferedWriter(Paths.get(runPath).resolve(runID + ".txt"),
-                StandardCharsets.UTF_8,
-                StandardOpenOption.CREATE,
-                StandardOpenOption.TRUNCATE_EXISTING,
-                StandardOpenOption.WRITE));
-        */
+
         for(int topicIndex=0; topicIndex<expectedTopics; topicIndex++) {
             // first search
             retrievedDocs = s.search(topicIndex);
 
-            System.out.printf("\nRetrieved docs for topic %d: %d\n", topicIndex+1, retrievedDocs.length);
+            int num_ret = 0;
+            for(Document d : retrievedDocs)
+                if(d != null)
+                    num_ret++;
+            System.out.printf("\nRetrieved docs for topic %d: %d\n", topicIndex+1, num_ret);
 
             // second indexing
             if(topicIndex != 0)     //if topicIndex = 0 then index empty
@@ -154,19 +153,11 @@ public class HelloTipster {
 
             // second search
             s_reRank.search(topicIndex);
-
-            /*for(String doc : bestDocs)
-                if(doc != null)
-                    run.printf(Locale.ENGLISH, doc);
-
-            run.flush();
-             */
         }
 
         s.closeResources();
         i_reRank.closeResources();
         s_reRank.closeResources();
-        //run.close();
     }
 
 }

@@ -283,10 +283,7 @@ public class DirectoryIndexer {
                         doc.add(new StringField(ParsedDocument.FIELDS.ID, pd.getIdentifier(), Field.Store.YES));
 
                         // add the document body
-                        FieldType type = new FieldType();
-                        type.setStored(true);
-                        type.setIndexOptions(IndexOptions.DOCS);
-                        doc.add(new Field("body", pd.getBody(), type));
+                        doc.add(new BodyField(pd.getBody()));
 
                         //System.out.println(pd.getIdentifier());
                         //System.out.println(pd.getBody());
@@ -294,7 +291,6 @@ public class DirectoryIndexer {
                         writer.addDocument(doc);
 
                         docsCount++;
-
 
                         // print progress every 10000 indexed documents
                         if (docsCount % 10000 == 0) {

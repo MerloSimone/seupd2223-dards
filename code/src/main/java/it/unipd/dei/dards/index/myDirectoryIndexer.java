@@ -258,14 +258,16 @@ public class myDirectoryIndexer {
 
         start = System.currentTimeMillis();
 
-        System.out.printf("%n#### Start indexing ####%n");
+        System.out.printf("%n@@@@ Start indexing @@@@%n");
 
         docsCount = 0;
 
         for (Document doc : retrievedDocs) {
             if (doc == null)
                 continue;
-
+            if(docsCount == 0) {
+                //System.out.printf("%s\n", doc.get(ParsedDocument.FIELDS.BODY));
+            }
             writer.addDocument(doc);
 
             docsCount++;
@@ -276,7 +278,7 @@ public class myDirectoryIndexer {
         System.out.printf(" %d document(s) indexed in %d milliseconds.%n",
                 (int) docsCount, System.currentTimeMillis() - start);
 
-        System.out.printf("#### Indexing complete ####%n");
+        System.out.printf("@@@@ Indexing complete @@@@%n");
     }
 
     /**

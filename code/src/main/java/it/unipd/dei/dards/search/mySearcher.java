@@ -146,6 +146,7 @@ public class mySearcher {
      * @param runID            the identifier of the run to be created.
      * @param runPath          the path where to store the run.
      * @param maxDocsRetrieved the maximum number of documents to be retrieved.
+     *
      * @throws NullPointerException     if any of the parameters is {@code null}.
      * @throws IllegalArgumentException if any of the parameters assumes invalid values.
      */
@@ -306,19 +307,21 @@ public class mySearcher {
      */
     public void search(int topicIndex) throws IOException, ParseException {
 
-        System.out.printf("%n#### Start second searching ####%n");
+        System.out.printf("%n§§§§ Start second searching §§§§%n");
 
         // the start time of the searching
         final long start = System.currentTimeMillis();
 
         final Set<String> idField = new HashSet<>();
         idField.add(ParsedDocument.FIELDS.ID);
+        idField.add(ParsedDocument.FIELDS.BODY);
 
         BooleanQuery.Builder bq = null;
         Query q = null;
         TopDocs docs = null;
         ScoreDoc[] sd = null;
         String docID = null;
+        String docBody = null;
         //String[] bestDocs = null;
 
         try {
@@ -340,6 +343,12 @@ public class mySearcher {
 
             for (int i = 0, n = sd.length; i < n; i++) {
                 docID = reader.document(sd[i].doc, idField).get(ParsedDocument.FIELDS.ID);
+                docBody = reader.document(sd[i].doc, idField).get(ParsedDocument.FIELDS.BODY);
+
+                if(i == 0) {
+                    System.out.printf("Score %s: %f\n", docID, sd[i].score);
+                    //System.out.printf("%s\n", docBody);
+                }
 
                 //bestDocs[i] = String.format(" %s Q0 %s %d %.6f %s%n", t.getQueryID(), docID, i, sd[i].score, runID);
                 run.printf(" %s Q0 %s %d %.6f %s%n", t.getQueryID(), docID, i, sd[i].score, runID);
@@ -355,7 +364,7 @@ public class mySearcher {
         elapsedTime = System.currentTimeMillis() - start;
 
         System.out.printf(" Topic %d searched in %d ms.%n", topicIndex+1, elapsedTime);
-        System.out.printf("#### Searching complete ####%n");
+        System.out.printf("§§§§ Searching complete §§§§%n");
 
         //return bestDocs;
     }

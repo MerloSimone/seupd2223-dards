@@ -54,6 +54,7 @@ import java.util.*;
 
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
+import org.apache.lucene.util.QueryBuilder;
 
 /**
  * Searches a document collection.
@@ -345,14 +346,16 @@ public class Searcher {
                 docID = reader.document(sd[i].doc, idField).get(ParsedDocument.FIELDS.ID);
                 docBody = reader.document(sd[i].doc, idField).get(ParsedDocument.FIELDS.BODY);
 
+                if(i == 0) {
+                    System.out.printf("Score %s: %f\n", docID, sd[i].score);
+                    //System.out.printf("%s\n", docBody);
+                }
+
                 Document document = new Document();
 
                 document.add(new StringField(ParsedDocument.FIELDS.ID, docID, Field.Store.YES));
 
-                FieldType type = new FieldType();
-                type.setStored(true);
-                type.setIndexOptions(IndexOptions.DOCS);
-                document.add(new Field("body", docBody, type));
+                document.add(new BodyField(docBody));
 
                 retrievedDocs[i] = document;
 
