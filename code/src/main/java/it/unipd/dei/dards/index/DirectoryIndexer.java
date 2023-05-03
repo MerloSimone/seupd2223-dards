@@ -39,6 +39,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 
 /**
  * Indexes documents processing a whole directory tree.
@@ -248,6 +249,91 @@ public class DirectoryIndexer {
 
     }
 
+
+    public DirectoryIndexer(final Analyzer analyzer, final Similarity similarity, final int ramBufferSizeMB,
+                            final String indexPath,  final long expectedDocs) {
+
+
+
+        if (analyzer == null) {
+            throw new NullPointerException("Analyzer cannot be null.");
+        }
+
+        if (similarity == null) {
+            throw new NullPointerException("Similarity cannot be null.");
+        }
+
+        if (ramBufferSizeMB <= 0) {
+            throw new IllegalArgumentException("RAM buffer size cannot be less than or equal to zero.");
+        }
+
+        final IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
+        iwc.setSimilarity(similarity);
+        iwc.setRAMBufferSizeMB(ramBufferSizeMB);
+        iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
+        iwc.setCommitOnClose(true);
+        iwc.setUseCompoundFile(true);
+
+        if (indexPath == null) {
+            throw new NullPointerException("Index path cannot be null.");
+        }
+
+        if (indexPath.isEmpty()) {
+            throw new IllegalArgumentException("Index path cannot be empty.");
+        }
+
+        final Path indexDir = Paths.get(indexPath);
+
+        // if the directory does not already exist, create it
+        if (Files.notExists(indexDir)) {
+            try {
+                Files.createDirectory(indexDir);
+            } catch (Exception e) {
+                throw new IllegalArgumentException(
+                        String.format("Unable to create directory %s: %s.", indexDir.toAbsolutePath().toString(),
+                                e.getMessage()), e);
+            }
+        }
+
+        if (!Files.isWritable(indexDir)) {
+            throw new IllegalArgumentException(
+                    String.format("Index directory %s cannot be written.", indexDir.toAbsolutePath().toString()));
+        }
+
+        if (!Files.isDirectory(indexDir)) {
+            throw new IllegalArgumentException(String.format("%s expected to be a directory where to write the index.",
+                    indexDir.toAbsolutePath().toString()));
+        }
+
+
+
+
+        if (expectedDocs <= 0) {
+            throw new IllegalArgumentException(
+                    "The expected number of documents to be indexed cannot be less than or equal to zero.");
+        }
+        this.expectedDocs = expectedDocs;
+
+        this.docsCount = 0;
+
+        this.bytesCount = 0;
+
+        this.filesCount = 0;
+
+        try {
+            writer = new IndexWriter(FSDirectory.open(indexDir), iwc);
+        } catch (IOException e) {
+            throw new IllegalArgumentException(String.format("Unable to create the index writer in directory %s: %s.",
+                    indexDir.toAbsolutePath().toString(), e.getMessage()), e);
+        }
+
+        this.start = System.currentTimeMillis();
+        this.dpCls=null;
+        this.docsDir=null;
+        this.extension=null;
+        this.cs=null;
+    }
+
     /**
      * Indexes the documents.
      *
@@ -312,6 +398,42 @@ public class DirectoryIndexer {
                           bytesCount / MBYTE, (System.currentTimeMillis() - start) / 1000);
 
         System.out.printf("#### Indexing complete ####%n");
+    }
+
+
+    /**
+     * Indexes the documents.
+     *
+     * @throws IOException if something goes wrong while indexing.
+     */
+    public void index(List<Document> docs) throws IOException {
+
+        System.out.printf("%n#### Start re-indexing from documents ####%n");
+        docsCount=0;
+        for(Document d: docs){
+            writer.addDocument(d);
+            docsCount++;
+
+            if (docsCount % 10000 == 0) {
+                System.out.printf("%d document(s) (%d files, %d Mbytes) re-indexed in %d seconds.%n",
+                        docsCount, filesCount, bytesCount / MBYTE,
+                        (System.currentTimeMillis() - start) / 1000);
+            }
+        }
+
+
+        writer.commit();
+
+        writer.close();
+
+        if (docsCount != expectedDocs) {
+            System.out.printf("Expected to index %d documents; %d indexed instead.%n", expectedDocs, docsCount);
+        }
+
+        System.out.printf("%d document(s) (%d files, %d Mbytes) re-indexed in %d seconds.%n", docsCount, filesCount,
+                bytesCount / MBYTE, (System.currentTimeMillis() - start) / 1000);
+
+        System.out.printf("#### Re-Indexing complete ####%n");
     }
 
     /**

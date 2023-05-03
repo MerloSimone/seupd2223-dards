@@ -71,7 +71,7 @@ public class HelloFrench {
 
         final String runPath = "code/experiment";
 
-        final String runID = "seupd2223-dards";
+        final String runID = "seupd2223-dards-norerank";
 
         final int maxDocsRetrieved = 1000;
 
