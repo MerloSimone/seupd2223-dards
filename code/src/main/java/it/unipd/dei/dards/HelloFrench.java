@@ -50,6 +50,8 @@ public class HelloFrench {
      */
     public static void main(String[] args) throws Exception {
 
+        final float k1=0.95f;
+        final float b=0.76f;
         final int ramBuffer = 256;
         final String docsPath = "./input/French/Documents/Trec";
         final String indexPath = "code/experiment/index-base-french";

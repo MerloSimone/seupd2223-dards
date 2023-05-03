@@ -65,7 +65,10 @@ public class MyFrenchAnalyzer extends Analyzer {
 
         TokenStream  tokens= new ElisionFilter(source, loadStopList("french-arcticles.txt"));
         tokens = new LowerCaseFilter(tokens);
+        //tokens = new StopFilter(tokens, loadStopList("snowball.txt"));
+        //tokens = new StopFilter(tokens, loadStopList("smart.txt"));
         tokens = new StopFilter(tokens, loadStopList("stopwords-fr.txt"));
+
         tokens = new ASCIIFoldingFilter(tokens); //needed because of the french accents
         //tokens = new FrenchMinimalStemFilter(tokens); //the worst
 

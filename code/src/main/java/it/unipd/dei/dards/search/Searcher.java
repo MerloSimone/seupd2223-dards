@@ -16,6 +16,7 @@
 
 package it.unipd.dei.dards.search;
 
+import it.unipd.dei.dards.analysis.MyFrenchAnalyzer;
 import it.unipd.dei.dards.parse.ParsedDocument;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
@@ -359,21 +360,19 @@ public class Searcher {
      */
     public static void main(String[] args) throws Exception {
 
-        final String topics = "./input/English/Queries/train.tsv";
+        final String topics = "./input/French/Queries/train.tsv";
 
-        final String indexPath = "experiment/index-stop-stem";
+        final String indexPath = "code/experiment/index-base-french";
 
-        final String runPath = "experiment";
+        final String runPath = "code/experiment";
 
-        final String runID = "seupd2223-dards";
+        final String runID = "seupd2223-dards-sim";
 
         final int maxDocsRetrieved = 1000;
 
-        final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
-                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).addTokenFilter(KStemFilterFactory.class).build();
-
+        final Analyzer a = new MyFrenchAnalyzer();
         //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new DFRSimilarity(new BasicModelIne(), new AfterEffectL(), new NormalizationH2(0.9F))});
-        final Similarity sim = new BM25Similarity();
+        final Similarity sim = new BM25Similarity(0.95f,0.77f);  //def 1.2 0.75
 
         Searcher s = new Searcher(a, sim, indexPath, topics, 672, runID, runPath, maxDocsRetrieved);
 
