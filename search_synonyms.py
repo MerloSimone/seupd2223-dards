@@ -5,18 +5,18 @@ from time import sleep
 # Global variable to create the requests to the translation site
 site = "https://dictionary.reverso.net/french-synonyms/"
 user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.68"
-coockies_str = "__qca=P0-394523565-1680281149278; experiment_context_f3gk3md2a=1; didomi_token=eyJ1c2VyX2lkIjoiMTg3Mzg4ZmEtMTY1Zi02M2I5LWJmMDItOGNiMzNmODE4NGMwIiwiY3JlYXRlZCI6IjIwMjMtMDMtMzFUMTY6NDU6NTIuNzMxWiIsInVwZGF0ZWQiOiIyMDIzLTAzLTMxVDE2OjQ1OjUyLjczMVoiLCJ2ZW5kb3JzIjp7ImVuYWJsZWQiOlsiZ29vZ2xlIiwiYzpnb29nbGVhbmEtbTIyS1RwM1kiLCJjOmdvb2dsZWFuYS00VFhuSmlnUiJdfSwidmVuZG9yc19saSI6eyJlbmFibGVkIjpbImdvb2dsZSJdfSwidmVyc2lvbiI6MiwiYWMiOiJBRm1BQ0FGay5BRm1BQ0FGayJ9; euconsent-v2=CPpfVkAPpfVkAAHABBENC9CgAP_AAH_AAAAAJTtf_X__b2_r-_5_f_t0eY1P9_7__-0zjhfdl-8N3f_X_L8X52M7vF36tq4KuR4ku3LBIUdlHPHcTVmw6okVryPsbk2cr7NKJ7PEmnMbO2dYGH9_n1_z-ZKY7___f_7z_v-v________7-3f3__5___-3_e_V__9zfn9_____9vP___9v-_9__________3_79_7_H9-eCTYBJhq3EAXYljgTbRhFAiBGFYSFUCgAooBhaIDCB1cFOyuAn1hEgAQCgCMCIEOAKMGAQAAAQBIREBIEeCAQAEQCAAEACoRCAAjYBBQAWAgEAAoBoWKMUAQgSEGRERFKYEBEiQUE9lQglB_oaYQh1lgBQaP-KhARKAEKwIhIWDkOCJAS8WSBZijfIARgBQCiVCtQSemgAAA.f_gAD_gAAAAA; _ramjsShID=c106a259-b364-4904-92f4-d9fdbefec139; __qca=P0-394523565-1680281149278; __gads=ID=48266b0160c70117:T=1680281154:S=ALNI_MbzhWi2ayr921il68U0d2hqkpZ0UQ; reverso.net.apps-promo2=2; _ga_9S2DQ8JXES=GS1.1.1682444888.2.0.1682444896.0.0.0; ASP.NET_SessionId=p3r2okyynpd5h0aeehibjqrz; LOCDNODES=lofront14; rumjs.geoloc.c=it; _gid=GA1.2.1847752363.1683278161; reverso.net.promoCm=1; experiment_dictionary_A34jFDu3y=0; _pbjs_userid_consent_data=8423202703717523; mp_cp=1; __gpi=UID=00000bcf022bd904:T=1680281154:RT=1683300170:S=ALNI_MZ3FMUlQunkU3Rn9hs0iUxw4MLl7Q; _ga=GA1.2.811592097.1680281151; _gat_gtag_UA_2834324_5=1; _ga_SKF9LKC2Y9=GS1.1.1683298110.4.1.1683300179.0.0.0; cto_bundle=CXulM19yTW9aa0hpTlBNOHEwQzdlSklycERsUm9JUGJLYkNNJTJGNnplUiUyQmdLTXNNYndlQTVTa21BQjVBeXg4UlMzSFVFMnhMVVhRWFhaJTJGNzlnZHJzWGhxck5ZZWpoeSUyQnk3N1lDJTJGUlY0NU13YVFTcmZKaHIwMEhRR0dKcHgxdkJhOUh1Qk1EVTFWcnByZmt1JTJCMVpwQjBYUmhGWGclM0QlM0Q"
+cookies_str = "__qca=P0-394523565-1680281149278; experiment_context_f3gk3md2a=1; didomi_token=eyJ1c2VyX2lkIjoiMTg3Mzg4ZmEtMTY1Zi02M2I5LWJmMDItOGNiMzNmODE4NGMwIiwiY3JlYXRlZCI6IjIwMjMtMDMtMzFUMTY6NDU6NTIuNzMxWiIsInVwZGF0ZWQiOiIyMDIzLTAzLTMxVDE2OjQ1OjUyLjczMVoiLCJ2ZW5kb3JzIjp7ImVuYWJsZWQiOlsiZ29vZ2xlIiwiYzpnb29nbGVhbmEtbTIyS1RwM1kiLCJjOmdvb2dsZWFuYS00VFhuSmlnUiJdfSwidmVuZG9yc19saSI6eyJlbmFibGVkIjpbImdvb2dsZSJdfSwidmVyc2lvbiI6MiwiYWMiOiJBRm1BQ0FGay5BRm1BQ0FGayJ9; euconsent-v2=CPpfVkAPpfVkAAHABBENC9CgAP_AAH_AAAAAJTtf_X__b2_r-_5_f_t0eY1P9_7__-0zjhfdl-8N3f_X_L8X52M7vF36tq4KuR4ku3LBIUdlHPHcTVmw6okVryPsbk2cr7NKJ7PEmnMbO2dYGH9_n1_z-ZKY7___f_7z_v-v________7-3f3__5___-3_e_V__9zfn9_____9vP___9v-_9__________3_79_7_H9-eCTYBJhq3EAXYljgTbRhFAiBGFYSFUCgAooBhaIDCB1cFOyuAn1hEgAQCgCMCIEOAKMGAQAAAQBIREBIEeCAQAEQCAAEACoRCAAjYBBQAWAgEAAoBoWKMUAQgSEGRERFKYEBEiQUE9lQglB_oaYQh1lgBQaP-KhARKAEKwIhIWDkOCJAS8WSBZijfIARgBQCiVCtQSemgAAA.f_gAD_gAAAAA; _ramjsShID=c106a259-b364-4904-92f4-d9fdbefec139; __qca=P0-394523565-1680281149278; __gads=ID=48266b0160c70117:T=1680281154:S=ALNI_MbzhWi2ayr921il68U0d2hqkpZ0UQ; reverso.net.apps-promo2=2; _ga_9S2DQ8JXES=GS1.1.1682444888.2.0.1682444896.0.0.0; ASP.NET_SessionId=p3r2okyynpd5h0aeehibjqrz; LOCDNODES=lofront14; rumjs.geoloc.c=it; _gid=GA1.2.1847752363.1683278161; reverso.net.promoCm=1; experiment_dictionary_A34jFDu3y=0; _pbjs_userid_consent_data=8423202703717523; mp_cp=1; __gpi=UID=00000bcf022bd904:T=1680281154:RT=1683300170:S=ALNI_MZ3FMUlQunkU3Rn9hs0iUxw4MLl7Q; _ga=GA1.2.811592097.1680281151; _gat_gtag_UA_2834324_5=1; _ga_SKF9LKC2Y9=GS1.1.1683298110.4.1.1683300179.0.0.0; cto_bundle=CXulM19yTW9aa0hpTlBNOHEwQzdlSklycERsUm9JUGJLYkNNJTJGNnplUiUyQmdLTXNNYndlQTVTa21BQjVBeXg4UlMzSFVFMnhMVVhRWFhaJTJGNzlnZHJzWGhxck5ZZWpoeSUyQnk3N1lDJTJGUlY0NU13YVFTcmZKaHIwMEhRR0dKcHgxdkJhOUh1Qk1EVTFWcnByZmt1JTJCMVpwQjBYUmhGWGclM0QlM0Q"
 
 """
     Function to prepare the dictionary containing the cookie content
 """
-def prepare_coockie(coockies_to_parse: str) -> dict:
-    coockies_dict = {}
-    for cs in coockies_to_parse.split():
+def prepare_cookies(cookies_to_parse: str) -> dict:
+    cookies_dict = {}
+    for cs in cookies_to_parse.split():
         key = cs.split("=")[0]
         value = str(cs.split("=")[1]).replace(';', '')
-        coockies_dict[key] = value
-    return coockies_dict
+        cookies_dict[key] = value
+    return cookies_dict
 
 
 """
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     tot = len(pending_word)
     
     try:
-        cooked_cookies = prepare_coockie(coockies_str)
+        cooked_cookies = prepare_cookies(cookies_str)
         while term := pending_word.pop():
             print(f"[{len(pending_word)}] Analyzing <{term}>")
             try:
