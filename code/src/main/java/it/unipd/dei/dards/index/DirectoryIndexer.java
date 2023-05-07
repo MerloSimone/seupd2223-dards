@@ -29,13 +29,12 @@ import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.*;
 import org.apache.lucene.search.similarities.*;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.NIOFSDirectory;
+import org.apache.lucene.util.BytesRef;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +44,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Indexes documents processing a whole directory tree.
@@ -110,6 +110,7 @@ public class DirectoryIndexer {
      */
     private long bytesCount;
 
+
     /**
      * Creates a new indexer.
      *
@@ -162,6 +163,7 @@ public class DirectoryIndexer {
         if (indexPath.isEmpty()) {
             throw new IllegalArgumentException("Index path cannot be empty.");
         }
+
 
         final Path indexDir = Paths.get(indexPath);
 
@@ -452,73 +454,6 @@ public class DirectoryIndexer {
 
 
 
-    /**
-     * This method calculates the TF-IDF score for each terms in the indexed
-     * documents
-     *
-     * @return - Hashmap of TF-IDF score per each term in document wise
-     */
-   /* public HashMap<Integer, HashMap> tfIdfScore() {
-
-        long noOfDocs = expectedDocs;
-
-        HashMap<Integer, HashMap> scoreMap = new HashMap<Integer, HashMap>();
-        //HashMap<Integer, float[]> scoreMap = new HashMap<Integer, float[]>();
-
-
-        try {
-
-            DirectoryReader dr=DirectoryReader.open(FSDirectory.open(new File(pathtoindex));
-            IndexReader re = new IndexReader(dr);
-            // IndexReader re = IndexReader.open(ramMemDir);
-
-            int i = 0;
-            for (int k = 0; k < numberOfDocs; k++) {
-                int freq[];
-                TermFreqVector termsFreq;
-                TermFreqVector termsFreqDocId;
-                //TermFreqVector termsFreq3[];
-                HashMap<String, Float> wordMap = new HashMap<String, Float>();
-                String terms[];
-                float score[] = null;
-
-                //termsFreq3=re.getTermFreqVectors(currentDocID);
-                termsFreq = re.getTermFreqVector(k, "doccontent");
-                termsFreqDocId = re.getTermFreqVector(k, "docid");
-
-                int aInt = Integer.parseInt(termsFreqDocId.getTerms()[0]);
-                freq = termsFreq.getTermFrequencies();
-
-                terms = termsFreq.getTerms();
-
-                int noOfTerms = terms.length;
-                score = new float[noOfTerms];
-                DefaultSimilarity simi = new DefaultSimilarity();
-                for (i = 0; i < noOfTerms; i++) {
-                    int noofDocsContainTerm = re.docFreq(new Term("doccontent", terms[i]));
-                    // System.out.println(terms[i]+"\t"+freq[i]);
-                    //int noofDocsContainTerm = docsContainTerm(terms[i], "docnames");
-                    float tf = simi.tf(freq[i]);
-                    float idf = simi.idf(noofDocsContainTerm, noOfDocs);
-                    wordMap.put(terms[i], (tf * idf));
-
-                }
-                scoreMap.put(aInt, wordMap);
-            }
-
-
-        } catch (IOException e) {
-            // score = null;
-            e.printStackTrace();
-        }
-
-
-
-        //Map<Integer,Float[]> scoreMap=new Map<Integer, Float[]>();
-
-
-        return scoreMap;
-    }*/
 
 
 

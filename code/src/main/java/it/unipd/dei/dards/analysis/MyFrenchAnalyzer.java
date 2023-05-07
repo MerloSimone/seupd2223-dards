@@ -25,7 +25,9 @@ import org.apache.lucene.analysis.en.*;
 import org.apache.lucene.analysis.fr.FrenchLightStemFilter;
 import org.apache.lucene.analysis.fr.FrenchMinimalStemFilter;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
+import org.apache.lucene.analysis.miscellaneous.HyphenatedWordsFilter;
 import org.apache.lucene.analysis.miscellaneous.KeywordMarkerFilter;
+import org.apache.lucene.analysis.pattern.PatternReplaceFilter;
 import org.apache.lucene.analysis.shingle.ShingleFilter;
 import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
@@ -35,6 +37,7 @@ import org.apache.lucene.analysis.util.ElisionFilter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import static it.unipd.dei.dards.analysis.AnalyzerUtil.consumeTokenStream;
 import static it.unipd.dei.dards.analysis.AnalyzerUtil.loadStopList;
@@ -64,13 +67,17 @@ public class MyFrenchAnalyzer extends Analyzer {
 
 
         TokenStream  tokens= new ElisionFilter(source, loadStopList("french-arcticles.txt"));
+
         tokens = new LowerCaseFilter(tokens);
         //tokens = new StopFilter(tokens, loadStopList("snowball.txt"));
         //tokens = new StopFilter(tokens, loadStopList("smart.txt"));
         tokens = new StopFilter(tokens, loadStopList("stopwords-fr.txt"));
 
+        //tokens= new NumberFilter(tokens);
+
         tokens = new ASCIIFoldingFilter(tokens); //needed because of the french accents
         //tokens = new FrenchMinimalStemFilter(tokens); //the worst
+
 
 
         tokens=new FrenchLightStemFilter(tokens); //20 map
@@ -107,13 +114,12 @@ public class MyFrenchAnalyzer extends Analyzer {
         // text to analyze
         //final String text = "I now live in Rome where I met my wife Alice back in 2010 during a beautiful afternoon
         // . " + "Occasionally, I fly to New York to visit the United Nations where I would like to work. The last " + "time I was there in March 2019, the flight was very inconvenient, leaving at 4:00 am, and expensive," + " over 1,500 dollars.";
-        final String text = "groundstakes";
+        final String text = "sefad 2 v7";
 
         // use the analyzer to process the text and print diagnostic information about each token
         //consumeTokenStream(new BaseAnalyzer(), text);
 
-        final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
-                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).addTokenFilter(EnglishPossessiveFilterFactory.class).addTokenFilter(PorterStemFilterFactory.class).build();
+        final Analyzer a = new MyFrenchAnalyzer();
         consumeTokenStream(a, text);
 
 

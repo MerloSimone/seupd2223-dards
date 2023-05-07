@@ -71,7 +71,7 @@ public class HelloFrench {
 
         final String runPath = "code/experiment";
 
-        final String runID = "seupd2223-dards-norerank";
+        final String runID = "seupd2223-dards-norerank-noboost";
 
         final int maxDocsRetrieved = 1000;
 
@@ -83,7 +83,7 @@ public class HelloFrench {
         i.index();
 
         // searching
-        final Searcher s = new Searcher(a, sim, indexPath, topics, expectedTopics, runID, runPath, maxDocsRetrieved);
+        final Searcher s = new Searcher(a, sim, indexPath, topics, expectedTopics, runID, runPath, maxDocsRetrieved,expectedDocs);
         s.search();
 
     }
