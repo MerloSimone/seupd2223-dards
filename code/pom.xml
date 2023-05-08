@@ -30,6 +30,13 @@
 			<organizationUrl>http://dei.unipd.it/</organizationUrl>
 		</developer>
 		<developer>
+			<id>B0BB0</id>
+			<name>Riccardo Gobbo</name>
+			<email>riccardo.gobbo.2@studenti.unipd.it</email>
+			<organization>University of Padua, Italy</organization>
+			<organizationUrl>http://dei.unipd.it/</organizationUrl>
+		</developer>
+		<developer>
 			<id>pc</id>
 			<name>placeholder</name>
 			<email>placeholder@dei.unipd.it</email>
