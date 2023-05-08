@@ -14,13 +14,38 @@ discarded_docs = {}
 
 # Regex used while parsing files to ignore tags
 doc_no_pattern = "(?<=<DOCID>)\w+"
-tags_pattern="<DOC|<TEXT|<\/DOC|<\/TEXT"
+doc_start = "<DOC>"
+doc_end = "</DOC>"
+text_tag = "</TEXT>"
+tags_pattern_all="<DOC|<TEXT|<\/DOC|<\/TEXT"
 
 # Path of the files containing documents 
-doc_path = "input\\French\\Documents\\Trec\\"
+doc_path = "B-Long-September\\French\\Documents\\Trec\\"
 
 # Threshold for words frequencies
-threshold = 0.15
+threshold = 0.11
+
+"""
+    Create documents from test collection
+"""
+def create_doc(file) -> str:
+    doc = ""
+    while line := file.readline():
+        # If it's normal text and not tags of the document remove the \n
+        if search(tags_pattern_all, line) is None:
+            line = line.strip()
+        
+        # Last line of text must have a \n at the end
+        if search(text_tag, line) is not None:
+            line = "\n" + line      # <TEXT>\n -> \n<TEXT>\n
+        doc += line
+        
+        # If the parser reads </DOC>, the document is ended
+        if search(doc_end, line) is not None:
+            return doc
+    return None
+
+
 
 """
     Function to check if a document is relevant or not.
@@ -46,7 +71,7 @@ def check_doc(doc: str) -> bool:
             doc_id = res[0]
 
         # Exclude lines with tags
-        if len(findall(tags_pattern, line)) > 0:
+        if len(findall(tags_pattern_all, line)) > 0:
             continue
 
         # Create a dict containing every informative word of the document
@@ -54,6 +79,7 @@ def check_doc(doc: str) -> bool:
             if len(word) < 4:
                 continue
             try:
+                word = str(word).lower()
                 if no_words.get(word) != None: continue     # Check if the word must be ignored
                 words[word] += 1                            # Else increment the word's count
             except KeyError:
@@ -84,7 +110,7 @@ def check_doc(doc: str) -> bool:
 """
 def analyze_docs(dir):
     print("[-] Analyzing the documents..")
-    path = os.path.join("Documents_parsed")
+    path = os.path.join("docs_parsed_B")
 
     # Removing old folder and creating a new one where parsed files are saved
     try:
@@ -114,32 +140,33 @@ def analyze_docs(dir):
             file = open(doc_path + str(file_name), 'r', encoding="utf-8")       # Input file
             file_out = open(path + "\\" + file_name, 'w', encoding="utf-8")     # Output file
 
-            i = 1       # Number of line (file has always the same structure)
-            doc = ""    
-            while line := file.readline():
-                doc += line
-                if i % 7 == 0:      # The entire document (tags included) is created 
-                    try:
-                        # Relevant, word, doc_id, word_count, words_count, ratio
-                        res, word, doc_id, word_count, words_count, ratio = check_doc(doc)  # Check if it's relevant and what is the possible word that makes it excluded
-                        if res:                                             # If relevant save it
-                            file_out.write(doc)
-                            doc_kept += 1
-                        else: 
-                            discarded_docs[doc_id] = [file_name, word, word_count, words_count, ratio]   # If not relevant, add it to the list of ignored docs
-                    except Exception as e:
-                        print(f"[!] Some error occurred while reading the file {file_name} doc {doc_num}. Error:", e)
-                        pass
-                    doc = ""
-                    doc_num += 1
-                i += 1    
+            # i = 1       # Number of line (file has always the same structure)
+            # doc = ""    
+            while (doc := create_doc(file)) is not None:
+                # doc += line
+                # if i % 7 == 0:      # The entire document (tags included) is created 
+                try:
+                    
+                    # Relevant, word, doc_id, word_count, words_count, ratio
+                    res, word, doc_id, word_count, words_count, ratio = check_doc(doc)  # Check if it's relevant and what is the possible word that makes it excluded
+                    if res:                                             # If relevant save it
+                        file_out.write(doc)
+                        doc_kept += 1
+                    else: 
+                        discarded_docs[doc_id] = [file_name, word, word_count, words_count, ratio]   # If not relevant, add it to the list of ignored docs
+                except Exception as e:
+                    print(f"[!] Some error occurred while reading the file {file_name} doc {doc_num}. Error:", e)
+                    pass
+                # doc = ""
+                doc_num += 1
+                # i += 1    
 
             file.close()
             file_out.close()
         except Exception as e:
             print(f"[!] Some error occurred while reading the file {file_name} doc {doc_num}. Error:", e)
             pass
-
+        
         tot_doc += doc_num  # Update number of documents read
         
 
@@ -154,7 +181,10 @@ def analyze_docs(dir):
         except Exception as e:
             print(f"[!] An error occurred with doc {doc}. Error: {e}")
             pass
-    
+    """
+        Decomment if the qrels are not available
+    """
+    """
     # Check which documents have erroneously been discarded
     file_qrels = open("input\\French\\Qrels\\train.txt", "r", encoding="utf-8")
     doc_pattern = "doc\d+ \d+"
@@ -175,6 +205,7 @@ def analyze_docs(dir):
             print(f"[!] Error reading line {true_res}. Error: {e}")
 
     file_qrels.close()
+    """
     print(f"[+] {len(document_list)} files analyzed, {tot_doc} documents analyzed, {doc_kept} documents kept")       
 
 
@@ -203,8 +234,8 @@ def add_useless_words(files):
 if __name__ == "__main__":
     try:
         # Files containing all words to ignore while parsing the documents
-        files = ["code\\src\\main\\resources\\stopwords-fr-002.txt",
-                 "code\\src\\main\\resources\\french-articles.txt"]
+        files = ["stopwords-fr-002.txt",
+                 "french-articles.txt"]
         
         # Adding words to ignore
         add_useless_words(files)
