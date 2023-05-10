@@ -18,21 +18,17 @@ package it.unipd.dei.dards.search;
 
 import it.unipd.dei.dards.index.BodyField;
 import it.unipd.dei.dards.parse.ParsedDocument;
-import opennlp.tools.dictionary.Index;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.en.KStemFilterFactory;
-import org.apache.lucene.analysis.en.PorterStemFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.benchmark.quality.QualityQuery;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -54,7 +50,6 @@ import java.util.*;
 
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
-import org.apache.lucene.util.QueryBuilder;
 
 /**
  * Searches a document collection.
@@ -307,7 +302,7 @@ public class Searcher {
      */
     public Document[] search(int topicIndex) throws IOException, ParseException {
 
-        System.out.printf("%n#### Start first searching ####%n");
+        //System.out.printf("%n#### Start first searching ####%n");
 
         // the start time of the searching
         final long start = System.currentTimeMillis();
@@ -359,11 +354,10 @@ public class Searcher {
 
                 retrievedDocs[i] = document;
 
-                //run.printf(Locale.ENGLISH, " %s Q0 %s %d %.6f %s%n", t.getQueryID(), docID, i, sd[i].score,
-                        //runID);
+                run.printf(Locale.ENGLISH, " %s Q0 %s %d %.6f %s%n", t.getQueryID(), docID, i, sd[i].score, runID);
             }
 
-            //run.flush();
+            run.flush();
         } finally {
 
         }
@@ -372,7 +366,7 @@ public class Searcher {
 
         System.out.printf(" Topic %d searched in %d milliseconds.%n", topicIndex+1, elapsedTime);
 
-        System.out.printf("#### Searching complete ####%n");
+        //System.out.printf("#### Searching complete ####%n");
 
         return retrievedDocs;
     }
@@ -385,6 +379,7 @@ public class Searcher {
     public void closeResources() throws IOException {
         reader.close();
         run.close();
+        System.out.printf("#### Searching complete ####%n");
     }
 
     /**
@@ -419,3 +414,4 @@ public class Searcher {
     }
 
 }
+

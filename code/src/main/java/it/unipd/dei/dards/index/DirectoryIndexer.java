@@ -24,13 +24,10 @@ import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.en.KStemFilterFactory;
-import org.apache.lucene.analysis.en.PorterStemFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StringField;
-import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.search.similarities.*;
@@ -42,7 +39,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 
 /**
  * Indexes documents processing a whole directory tree.
@@ -171,7 +167,7 @@ public class DirectoryIndexer {
             } catch (Exception e) {
                 throw new IllegalArgumentException(
                         String.format("Unable to create directory %s: %s.", indexDir.toAbsolutePath().toString(),
-                                      e.getMessage()), e);
+                                e.getMessage()), e);
             }
         }
 
@@ -182,7 +178,7 @@ public class DirectoryIndexer {
 
         if (!Files.isDirectory(indexDir)) {
             throw new IllegalArgumentException(String.format("%s expected to be a directory where to write the index.",
-                                                             indexDir.toAbsolutePath().toString()));
+                    indexDir.toAbsolutePath().toString()));
         }
 
         if (docsPath == null) {
@@ -246,7 +242,7 @@ public class DirectoryIndexer {
             writer = new IndexWriter(FSDirectory.open(indexDir), iwc);
         } catch (IOException e) {
             throw new IllegalArgumentException(String.format("Unable to create the index writer in directory %s: %s.",
-                                                             indexDir.toAbsolutePath().toString(), e.getMessage()), e);
+                    indexDir.toAbsolutePath().toString(), e.getMessage()), e);
         }
 
         this.start = System.currentTimeMillis();
@@ -314,7 +310,7 @@ public class DirectoryIndexer {
         }
 
         System.out.printf("%d document(s) (%d files, %d Mbytes) indexed in %d seconds.%n", docsCount, filesCount,
-                          bytesCount / MBYTE, (System.currentTimeMillis() - start) / 1000);
+                bytesCount / MBYTE, (System.currentTimeMillis() - start) / 1000);
 
         System.out.printf("#### Indexing complete ####%n");
     }
@@ -347,7 +343,7 @@ public class DirectoryIndexer {
         list.add(new String[]{"doc062200100001", "doc062200100008", "doc062200100012"});
 
         DirectoryIndexer i = new DirectoryIndexer(a, sim, ramBuffer, indexPath, docsPath, extension,
-                                                  charsetName, expectedDocs, TipsterParser.class);
+                charsetName, expectedDocs, TipsterParser.class);
 
         i.index();
 

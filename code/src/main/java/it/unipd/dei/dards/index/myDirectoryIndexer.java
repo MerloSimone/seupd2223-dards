@@ -106,6 +106,9 @@ public class myDirectoryIndexer {
      */
     private long bytesCount;
 
+    IndexWriterConfig iwc;
+
+    Path indexDir;
 
     /**
      * Creates a new indexer.
@@ -146,7 +149,7 @@ public class myDirectoryIndexer {
             throw new IllegalArgumentException("RAM buffer size cannot be less than or equal to zero.");
         }
 
-        final IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
+        iwc = new IndexWriterConfig(analyzer);
         iwc.setSimilarity(similarity);
         iwc.setRAMBufferSizeMB(ramBufferSizeMB);
         iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
@@ -161,7 +164,7 @@ public class myDirectoryIndexer {
             throw new IllegalArgumentException("Index path cannot be empty.");
         }
 
-        final Path indexDir = Paths.get(indexPath);
+        indexDir = Paths.get(indexPath);
 
         // if the directory does not already exist, create it
         if (Files.notExists(indexDir)) {
@@ -293,6 +296,7 @@ public class myDirectoryIndexer {
     public void clearIndex() throws IOException {
         writer.deleteAll();
         writer.commit();
+        writer.close();
     }
 
     /**

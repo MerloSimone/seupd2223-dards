@@ -1,6 +1,6 @@
 package it.unipd.dei.dards;
 
-import it.unipd.dei.dards.index.DirectoryIndexer;
+import it.unipd.dei.dards.index.ReRankDirectoryIndexer;
 import it.unipd.dei.dards.parse.TipsterParser;
 import it.unipd.dei.dards.search.Searcher;
 import org.apache.lucene.analysis.Analyzer;
@@ -10,7 +10,6 @@ import org.apache.lucene.analysis.core.WhitespaceTokenizerFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.en.KStemFilterFactory;
 import org.apache.lucene.analysis.pattern.PatternReplaceFilterFactory;
-import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.search.similarities.*;
 
 import java.nio.charset.StandardCharsets;
@@ -70,7 +69,7 @@ public class HelloTipster_testSimilarities {
             final String runID = "seupd2223-dards_" + k;
 
             // indexing
-            final DirectoryIndexer i = new DirectoryIndexer(a_docs, sim[k], ramBuffer, indexPath, docsPath, extension, charsetName,
+            final ReRankDirectoryIndexer i = new ReRankDirectoryIndexer(a_docs, sim[k], ramBuffer, indexPath, docsPath, extension, charsetName,
                     expectedDocs, TipsterParser.class);
             i.index();
 
