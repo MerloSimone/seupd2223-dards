@@ -579,6 +579,10 @@ public class Searcher {
         BoostQuery boostQuery=null;
         BooleanQuery.Builder booleanQuery= new BooleanQuery.Builder();
 
+        TermQuery termQueryUrl=null;
+        BoostQuery boostQueryUrl=null;
+        BooleanQuery.Builder booleanQueryUrl= new BooleanQuery.Builder();
+
 
 
         //creating boosted query
@@ -587,12 +591,26 @@ public class Searcher {
             weight=tfidf.getOrDefault(tokens.get(i),0f);
             termQuery=new TermQuery(new Term(ParsedDocument.FIELDS.BODY,tokens.get(i)));
             boostQuery=new BoostQuery(termQuery,weight);
-            //System.out.println(tokens.get(i)+" "+weight);
             booleanQuery.add(boostQuery,BooleanClause.Occur.SHOULD);
+            //creating url query
+            termQueryUrl=new TermQuery(new Term(ParsedDocument.FIELDS.URL,tokens.get(i)));
+            boostQueryUrl=new BoostQuery(termQueryUrl,weight);
+            booleanQueryUrl.add(boostQueryUrl,BooleanClause.Occur.MUST);
+
+
+            //System.out.println(tokens.get(i)+" "+weight);
+
         }
 
-        return booleanQuery.build();
+        Query q=booleanQuery.build();
+        Query qUrl=booleanQueryUrl.build();
+
+        BooleanQuery.Builder finalQuery= new BooleanQuery.Builder();
+        finalQuery.add(q, BooleanClause.Occur.SHOULD).add(qUrl, BooleanClause.Occur.SHOULD);
+        return finalQuery.build();
     }
+
+
 
 
 
@@ -608,13 +626,13 @@ public class Searcher {
 
         final String topics = "./input/French/Queries/train.tsv";
 
-        final String indexPath = "code/experiment/index-base-french";
+        final String indexPath = "code/experiment/index-url-french";
 
         final String reindexPath= "code/experiment/index-rerank-french";
 
         final String runPath = "code/experiment";
 
-        final String runID = "seupd2223-dards-rerank100-totalboost";
+        final String runID = "seupd2223-dards-url-classic";
 
         final int maxDocsRetrieved = 1000;
 
@@ -635,8 +653,8 @@ public class Searcher {
             System.out.println("|"+word+"| => "+res.get(word));
         }*/
 
-        Searcher s = new Searcher(a, sim, indexPath, topics, 672, runID, runPath, maxDocsRetrieved,true,sim,a,256,reindexPath,1570734,100);
-        //Searcher s = new Searcher(a, sim, indexPath, topics, 672, runID, runPath, maxDocsRetrieved,1570734);
+        //Searcher s = new Searcher(a, sim, indexPath, topics, 672, runID, runPath, maxDocsRetrieved,true,sim,a,256,reindexPath,1570734,100);
+        Searcher s = new Searcher(a, sim, indexPath, topics, 672, runID, runPath, maxDocsRetrieved,1570734);
         s.search();
 
 

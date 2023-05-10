@@ -32,15 +32,21 @@ import org.apache.lucene.analysis.shingle.ShingleFilter;
 import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.apache.lucene.analysis.synonym.SolrSynonymParser;
 import org.apache.lucene.analysis.util.ElisionFilter;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import static it.unipd.dei.dards.analysis.AnalyzerUtil.consumeTokenStream;
 import static it.unipd.dei.dards.analysis.AnalyzerUtil.loadStopList;
+import static org.apache.lucene.analysis.AnalysisSPILoader.newFactoryClassInstance;
 
 /**
  * French analyzer to parse LongEval query and documents.
@@ -72,6 +78,7 @@ public class MyFrenchAnalyzer extends Analyzer {
         //tokens = new StopFilter(tokens, loadStopList("snowball.txt"));
         //tokens = new StopFilter(tokens, loadStopList("smart.txt"));
         tokens = new StopFilter(tokens, loadStopList("stopwords-fr.txt"));
+        //tokens = new StopFilter(tokens, loadStopList("url-stoplist.txt"));
 
         //tokens= new NumberFilter(tokens);
 

@@ -54,7 +54,7 @@ public class HelloFrench {
         final float b=0.76f;
         final int ramBuffer = 256;
         final String docsPath = "./input/French/Documents/Trec";
-        final String indexPath = "code/experiment/index-base-french";
+        final String indexPath = "code/experiment/index-url-french";
 
         final String extension = "txt";
         final int expectedDocs = 1570734;
@@ -68,17 +68,18 @@ public class HelloFrench {
         final Similarity sim = new BM25Similarity();//try to personalize parameters
 
         final String topics = "./input/French/Queries/train.tsv";
+        final String urlFile = "./input/French/urls.txt";
 
         final String runPath = "code/experiment";
 
-        final String runID = "seupd2223-dards-norerank-noboost";
+        final String runID = "seupd2223-dards-url-classic";//best is equalboost
 
         final int maxDocsRetrieved = 1000;
 
         final int expectedTopics = 672;
 
         // indexing
-        final DirectoryIndexer i = new DirectoryIndexer(a, sim, ramBuffer, indexPath, docsPath, extension, charsetName,
+        final DirectoryIndexer i = new DirectoryIndexer(a, sim, ramBuffer, indexPath, docsPath,urlFile, extension, charsetName,
                                                         expectedDocs, TipsterParser.class);
         i.index();
 

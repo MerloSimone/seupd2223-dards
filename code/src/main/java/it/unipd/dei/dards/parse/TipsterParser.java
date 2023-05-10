@@ -16,10 +16,13 @@
 
 package it.unipd.dei.dards.parse;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
+import it.unipd.dei.dards.utils.Rake;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,6 +50,8 @@ public class TipsterParser extends it.unipd.dei.dards.parse.DocumentParser {
     private it.unipd.dei.dards.parse.ParsedDocument document = null;
 
 
+
+
     /**
      * Creates a new TIPSTER Corpus document parser.
      *
@@ -54,8 +59,9 @@ public class TipsterParser extends it.unipd.dei.dards.parse.DocumentParser {
      * @throws NullPointerException     if {@code in} is {@code null}.
      * @throws IllegalArgumentException if any error occurs while creating the parser.
      */
-    public TipsterParser(final Reader in) {
-        super(new BufferedReader(in));
+    public TipsterParser(final Reader in, final HashMap<String,String> urlList) {
+        super(new BufferedReader(in),urlList);
+
     }
 
 
@@ -106,8 +112,12 @@ public class TipsterParser extends it.unipd.dei.dards.parse.DocumentParser {
         }
 
         if (id != null) {
+            String url=null;
+            url=urlMap.get(id);
+
+
             document = new it.unipd.dei.dards.parse.ParsedDocument(id, body.length() > 0 ?
-                    body.toString().replaceAll("<[^>]*>", " ") : "#");
+                    body.toString().replaceAll("<[^>]*>", " ") : "#",url);
         }
 
 
@@ -131,7 +141,8 @@ public class TipsterParser extends it.unipd.dei.dards.parse.DocumentParser {
         Reader reader = new FileReader(
                 "./input/English/Documents/Trec/collector_kodicare_1.txt");
 
-        TipsterParser p = new TipsterParser(reader);
+        HashMap<String,String> map=new HashMap<String,String>();
+        TipsterParser p = new TipsterParser(reader,map);
 
         for (it.unipd.dei.dards.parse.ParsedDocument d : p) {
             System.out.printf("%n%n------------------------------------%n%s%n%n%n", d.toString());

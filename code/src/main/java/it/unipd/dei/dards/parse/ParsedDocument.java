@@ -44,9 +44,14 @@ public class ParsedDocument {
         public static final String ID = "id";
 
         /**
-         * The document identifier
+         * The document body
          */
         public static final String BODY = "body";
+
+        /**
+         * The document url
+         */
+        public static final String URL = "url";
     }
 
 
@@ -61,6 +66,11 @@ public class ParsedDocument {
     private final String body;
 
     /**
+     * The document url
+     */
+    public final String url;
+
+    /**
      * Creates a new parsed document
      *
      * @param id   the unique document identifier.
@@ -68,7 +78,7 @@ public class ParsedDocument {
      * @throws NullPointerException  if {@code id} and/or {@code body} are {@code null}.
      * @throws IllegalStateException if {@code id} and/or {@code body} are empty.
      */
-    public ParsedDocument(final String id, final String body) {
+    public ParsedDocument(final String id, final String body,final String url) {
 
         if (id == null) {
             throw new NullPointerException("Document identifier cannot be null.");
@@ -89,6 +99,16 @@ public class ParsedDocument {
         }
 
         this.body = body;
+
+        if (url == null) {
+            throw new NullPointerException("Document url cannot be null.");
+        }
+
+        if (url.isEmpty()) {
+            throw new IllegalStateException("Document url cannot be empty.");
+        }
+
+        this.url = url;
     }
 
     /**
@@ -109,11 +129,20 @@ public class ParsedDocument {
         return body;
     }
 
+    /**
+     * Returns the url of the document.
+     *
+     * @return the url of the document.
+     */
+    public String getUrl() {
+        return url;
+    }
+
 
     @Override
     public final String toString() {
         ToStringBuilder tsb = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("identifier", id).append(
-                "body", body);
+                "body", body).append("url", url);
 
         return tsb.toString();
     }

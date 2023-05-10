@@ -16,6 +16,8 @@
 
 package it.unipd.dei.dards.index;
 
+import com.univocity.parsers.tsv.TsvParser;
+import com.univocity.parsers.tsv.TsvParserSettings;
 import it.unipd.dei.dards.parse.DocumentParser;
 import it.unipd.dei.dards.parse.ParsedDocument;
 import it.unipd.dei.dards.parse.TipsterParser;
@@ -110,6 +112,11 @@ public class DirectoryIndexer {
      */
     private long bytesCount;
 
+    /**
+     * The path of the file containng the urls.
+     */
+    private final String urlFile;
+
 
     /**
      * Creates a new indexer.
@@ -127,7 +134,7 @@ public class DirectoryIndexer {
      * @throws IllegalArgumentException if any of the parameters assumes invalid values.
      */
     public DirectoryIndexer(final Analyzer analyzer, final Similarity similarity, final int ramBufferSizeMB,
-                            final String indexPath, final String docsPath, final String extension,
+                            final String indexPath, final String docsPath,final String urlFile, final String extension,
                             final String charsetName, final long expectedDocs,
                             final Class<? extends DocumentParser> dpCls) {
 
@@ -208,6 +215,13 @@ public class DirectoryIndexer {
         }
 
         this.docsDir = docsDir;
+
+
+        if (urlFile == null) {
+            throw new NullPointerException("Url file path cannot be null.");
+        }
+
+        this.urlFile=urlFile;
 
         if (extension == null) {
             throw new NullPointerException("File extension cannot be null.");
@@ -339,6 +353,7 @@ public class DirectoryIndexer {
         this.docsDir=null;
         this.extension=null;
         this.cs=null;
+        this.urlFile=null;
     }
 
     /**
@@ -350,12 +365,20 @@ public class DirectoryIndexer {
 
         System.out.printf("%n#### Start indexing ####%n");
 
+        TsvParserSettings settings = new TsvParserSettings();
+        settings.getFormat().setLineSeparator("\n");
+        TsvParser parser = new TsvParser(settings);
+        List<String[]> urlList = parser.parseAll(new File(urlFile));
+        HashMap<String,String> urlMap=new HashMap<>();
+        for(String[] pair:urlList){
+            urlMap.put(pair[0],pair[1]);
+        }
         Files.walkFileTree(docsDir, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 if (file.getFileName().toString().endsWith(extension)) {
 
-                    DocumentParser dp = DocumentParser.create(dpCls, Files.newBufferedReader(file, cs));
+                    DocumentParser dp = DocumentParser.create(dpCls, Files.newBufferedReader(file, cs),urlMap);
 
                     bytesCount += Files.size(file);
 
@@ -374,6 +397,9 @@ public class DirectoryIndexer {
                         doc.add(new BodyField(pd.getBody()));
                         //System.out.println(pd.getIdentifier());
                         //System.out.println(pd.getBody());
+
+                        //add the document url
+                        doc.add(new UrlField(pd.getUrl()));
 
                         writer.addDocument(doc);
 
@@ -490,6 +516,7 @@ public class DirectoryIndexer {
         final int ramBuffer = 256;
         final String docsPath = "./input/English/Documents/Trec";
         final String indexPath = "experiment/index-stop-stem";
+        final String urlFile = "./input/French/urls.txt";
 
         final String extension = "txt";
         final int expectedDocs = 1570734;
@@ -501,7 +528,7 @@ public class DirectoryIndexer {
         //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new DFRSimilarity(new BasicModelIne(), new AfterEffectL(), new NormalizationH2(0.9F))});
         final Similarity sim = new BM25Similarity();
 
-        DirectoryIndexer i = new DirectoryIndexer(a, sim, ramBuffer, indexPath, docsPath, extension,
+        DirectoryIndexer i = new DirectoryIndexer(a, sim, ramBuffer, indexPath, docsPath,urlFile, extension,
                                                   charsetName, expectedDocs, TipsterParser.class);
 
         i.index();
