@@ -445,7 +445,7 @@ public class ReRankSynonymSearcher {
                     topics.length);
         }
 
-        qp = new QueryParser(ParsedDocument.FIELDS.BODY, a_querySecond);
+        qp = new QueryParser(ParsedDocument.FIELDS.BODY, a_query);
 
         if (runID == null) {
             throw new NullPointerException("Run identifier cannot be null.");
@@ -562,17 +562,18 @@ public class ReRankSynonymSearcher {
                 //System.out.printf("sd size: %d%n", sd.length);
 
                 ArrayList<Document> reldocs=new ArrayList<>();
+                HashMap<String, ScoreDoc> elems = new HashMap<>();
                 for (int i = 0, n = sd.length; i < n; i++) {
-                    //docID = reader.document(sd[i].doc, idField).get(ParsedDocument.FIELDS.ID);
+                    docID = reader.document(sd[i].doc, idField).get(ParsedDocument.FIELDS.ID);
                     reldocs.add(reader.document(sd[i].doc));
-
+                    elems.put(docID, sd[i]);
 
                     //System.out.println(reader.document(sd[i].doc).get(ParsedDocument.FIELDS.BODY));
                     //run.printf(Locale.ENGLISH, " %s Q0 %s %d %.6f %s%n", t.getQueryID(), docID, i, sd[i].score,runID);
                 }
                 //TODO add call to search method passing the arraylist
 
-                this.search(reldocs,t,sd,q,idField);
+                this.search(reldocs,t,sd,q,idField, elems, reldocs);
                 run.flush();
 
             }
@@ -597,45 +598,33 @@ public class ReRankSynonymSearcher {
      * @throws IOException    if something goes wrong while searching.
      * @throws ParseException if something goes wrong while parsing topics.
      */
-    private void search(ArrayList<Document> oldreldocs,QualityQuery t,ScoreDoc[] oldsd, Query q,Set<String> idField) throws IOException, ParseException {
+    private void search(ArrayList<Document> oldreldocs,QualityQuery t,ScoreDoc[] oldsd, Query q,Set<String> idField, HashMap<String, ScoreDoc> oldElements, ArrayList<Document> initialDocs) throws IOException, ParseException {
 
         if(iteration == maxIterations && rerank) {
             iteration = 1;
             return;
         }
         if(rerank) {
+
             System.out.printf("%n#### Start rerank %d ####%n", iteration);
             System.out.printf("QUERY: %s%n", q.toString());
+            System.out.printf("oldreldocs size @%d: %d%n", iteration, oldreldocs.size());
+            int toIndex = 0;
+            int reRanksize = 100;
 
-            ArrayList<Document> firstHundred = null;
-            ScoreDoc[] firstHundredSd = null;
-            int hits = 0;
+            if(iteration == 1 || reRanksize > oldreldocs.size())
+                toIndex = oldreldocs.size();
+            else
+                toIndex = reRanksize;
 
-            if(iteration == 1) {
-                //System.out.println("reindex path " + reindexPath);
-                ReRankDirectoryIndexer diridx = new ReRankDirectoryIndexer(a_querySecond, sim, ramBuffer, reindexPath, maxDocsRetrieved);
-                diridx.index(oldreldocs);
-                //System.out.printf("%n### reindexing complete ###%n");
-            }
-            else{
-                //System.out.println("reindex path " + reindexPath);
-                /*firstHundred = new ArrayList<>();
-                if(oldreldocs.size() >= 100)
-                    firstHundredSd = new ScoreDoc[100];
-                else
-                    firstHundredSd = new ScoreDoc[oldreldocs.size()];
-
-                for(int i=0; i<100 && i<oldreldocs.size(); i++) {
-                    firstHundred.add(oldreldocs.get(i));
-                    firstHundredSd[i] = oldsd[i];
-                    hits++;
-                }
-                */
-                //ReRankDirectoryIndexer diridx = new ReRankDirectoryIndexer(a_docs, sim, ramBuffer, reindexPath, maxDocsRetrieved);
-                //System.out.printf("oldreldocs / firstHundred: %d / %d%n", oldreldocs.size(), firstHundred.size());
-                //diridx.index(oldreldocs);
-                //System.out.printf("%n### reindexing of first 100 docs complete ###%n");
-            }
+            //System.out.println("reindex path " + reindexPath);
+            ReRankDirectoryIndexer diridx = null;
+            if(iteration == 1)
+                diridx = new ReRankDirectoryIndexer(a_docs, sim, ramBuffer, reindexPath, maxDocsRetrieved);
+            else
+                diridx = new ReRankDirectoryIndexer(a_docs, sim, ramBuffer, reindexPath, maxDocsRetrieved);
+            diridx.index(oldreldocs.subList(0, toIndex));
+            //System.out.printf("%n### reindexing complete ###%n");
 
             DirectoryReader reIndexReader = null;
 
@@ -667,7 +656,7 @@ public class ReRankSynonymSearcher {
             Query qq = null;
 
             if(iteration == 1)
-                qqp = new QueryParser(ParsedDocument.FIELDS.BODY, a_querySecond);    //rerank on all docs
+                qqp = new QueryParser(ParsedDocument.FIELDS.BODY, a_query);    //rerank on all docs
             else
                 qqp = new QueryParser(ParsedDocument.FIELDS.BODY, a_query);   //rerank on first 100 docs
 
@@ -676,35 +665,28 @@ public class ReRankSynonymSearcher {
             qq = bbq.build();
             System.out.printf("%nQUERY: %s%n", qq.toString());
 
-            TopDocs reindexedDocs = null;
-            ScoreDoc[] reindexedSd = null;
-            if(iteration == 1) {
-                reindexedDocs = reIndexSearcher.search(qq, maxDocsRetrieved);
-                System.out.printf("Second search: %s / 1000%n", reindexedDocs.totalHits);
-                reindexedSd = reindexedDocs.scoreDocs;
-            }
-            else {
-                reindexedDocs = reIndexSearcher.search(qq, maxDocsRetrieved);
-                System.out.printf("Third search: %s / 100%n", reindexedDocs.totalHits);
-                reindexedSd = reindexedDocs.scoreDocs;
-                //System.out.printf("%f %f%n", reindexedSd[0].score, reindexedSd[1].score);
-            }
+            //search
+            TopDocs reindexedDocs = reIndexSearcher.search(qq, maxDocsRetrieved);
+            ScoreDoc[] reindexedSd = reindexedDocs.scoreDocs;
 
+            if(iteration == 1)
+                System.out.printf("Second search: %s / %d%n", reindexedDocs.totalHits, toIndex);
+            else
+                System.out.printf("Third search: %s / %d%n", reindexedDocs.totalHits, toIndex);
+
+            //write the run
             String docID;
             int currentRank = 0;
-            HashMap<Document, ScoreDoc> oldElements = new HashMap<>();
-            if(iteration == maxIterations-1)
-                for(int i=0; i<maxDocsRetrieved && i<oldreldocs.size(); i++)
-                    oldElements.put(oldreldocs.get(i), oldsd[i]);
 
             ArrayList<Document> reldocs=new ArrayList<>();
-
             for (int i = 0, n = reindexedSd.length; i < n; i++) {
                 docID = reIndexReader.document(reindexedSd[i].doc, idField).get(ParsedDocument.FIELDS.ID);
 
                 reldocs.add(reader.document(reindexedSd[i].doc));
+                oldElements.replace(docID, reindexedSd[i]);
+
                 if(iteration == maxIterations-1) {
-                    oldElements.remove(reader.document(reindexedSd[i].doc));
+                    oldElements.remove(docID);
                     run.printf(Locale.ENGLISH, " %s Q0 %s %d %.6f %s%n", t.getQueryID(), docID, currentRank, reindexedSd[i].score, runID);
                     currentRank++;
                 }
@@ -714,7 +696,15 @@ public class ReRankSynonymSearcher {
                 //System.out.printf("reIndexedSd length: %d%n", reindexedSd.length);
                 for(int k=0; k<oldreldocs.size(); k++) {
                     docID = oldreldocs.get(k).get(ParsedDocument.FIELDS.ID);
-                    ScoreDoc score = oldElements.remove(oldreldocs.get(k));
+                    ScoreDoc score = oldElements.remove(docID);
+                    if(score != null) {
+                        run.printf(Locale.ENGLISH, " %s Q0 %s %d %.6f %s%n", t.getQueryID(), docID, currentRank, score.score, runID);
+                        currentRank++;
+                    }
+                }
+                for(int k=0; k<initialDocs.size() && currentRank<maxDocsRetrieved; k++) {
+                    docID = initialDocs.get(k).get(ParsedDocument.FIELDS.ID);
+                    ScoreDoc score = oldElements.remove(docID);
                     if(score != null) {
                         run.printf(Locale.ENGLISH, " %s Q0 %s %d %.6f %s%n", t.getQueryID(), docID, currentRank, score.score, runID);
                         currentRank++;
@@ -725,9 +715,8 @@ public class ReRankSynonymSearcher {
             if(iteration == maxIterations-1)
                 System.out.printf("%n### ReRank completed ###%n");
 
-            System.out.printf("reldocs size @%d : %d%n", iteration, reldocs.size());
             iteration++;
-            this.search(reldocs, t, reindexedSd, q, idField);
+            this.search(reldocs, t, reindexedSd, qq, idField, oldElements, initialDocs);
         }else{
             String docID;
             for (int i = 0, n = oldreldocs.size(); i < n; i++) {
@@ -793,7 +782,7 @@ public class ReRankSynonymSearcher {
         //Searcher s = new Searcher(a, sim, indexPath, topics, 672, runID, runPath, maxDocsRetrieved,true,sim,a,256,reindexPath);
 
         final ReRankSynonymSearcher s = new ReRankSynonymSearcher(a_query, sim, indexPath, topics, 672, runID,
-                runPath, maxDocsRetrieved, true, sim, a_docs, 256, reIndexPath, a_query, 3);
+                runPath, maxDocsRetrieved, true, sim, a_docs, 256, reIndexPath, a_synonyms, 3);
         s.search();
 
 
