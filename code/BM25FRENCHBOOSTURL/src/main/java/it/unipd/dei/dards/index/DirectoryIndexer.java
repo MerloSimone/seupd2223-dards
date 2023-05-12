@@ -125,6 +125,7 @@ public class DirectoryIndexer {
      * @param charsetName     the name of the charset used for encoding documents.
      * @param expectedDocs    the total number of documents expected to be indexed
      * @param dpCls           the class of the {@code DocumentParser} to be used.
+     * @param urlFile         the path of the file containing the document id-url pairs.
      * @throws NullPointerException     if any of the parameters is {@code null}.
      * @throws IllegalArgumentException if any of the parameters assumes invalid values.
      */
@@ -265,7 +266,17 @@ public class DirectoryIndexer {
 
     }
 
-
+    /**
+     * Creates a new indexer.
+     *
+     * @param analyzer        the {@code Analyzer} to be used.
+     * @param similarity      the {@code Similarity} to be used.
+     * @param ramBufferSizeMB the size in megabytes of the RAM buffer for indexing documents.
+     * @param indexPath       the directory where to store the index.
+     * @param expectedDocs    the total number of documents expected to be indexed
+     * @throws NullPointerException     if any of the parameters is {@code null}.
+     * @throws IllegalArgumentException if any of the parameters assumes invalid values.
+     */
     public DirectoryIndexer(final Analyzer analyzer, final Similarity similarity, final int ramBufferSizeMB,
                             final String indexPath,  final long expectedDocs) {
 
@@ -431,7 +442,7 @@ public class DirectoryIndexer {
 
     /**
      * Indexes the documents.
-     *
+     * @param docs the list of document to index
      * @throws IOException if something goes wrong while indexing.
      */
     public void index(List<Document> docs) throws IOException {

@@ -52,6 +52,7 @@ public abstract class DocumentParser
      * Creates a new document parser.
      *
      * @param in the reader to the document(s) to be parsed.
+     * @param urlMap the map containing the document identifiers as url and the ulrs as values.
      * @throws NullPointerException if {@code in} is {@code null}.
      */
     protected DocumentParser(final Reader in, final HashMap<String,String> urlMap) {
@@ -109,6 +110,7 @@ public abstract class DocumentParser
      *
      * @param cls the class of the document parser to be instantiated.
      * @param in  the reader to the document(s) to be parsed.
+     * @param urlMap the map containing the document identifiers as url and the ulrs as values.
      * @return a new instance of {@code DocumentParser} for the given class.
      * @throws NullPointerException  if {@code cls} and/or {@code in} are {@code null}.
      * @throws IllegalStateException if something goes wrong in instantiating the class.
@@ -140,6 +142,7 @@ public abstract class DocumentParser
      *
      * @param cls the fully qualified name of class of the document parser to be instantiated.
      * @param in  the reader to the document(s) to be parsed.
+     * @param urlMap the map containing the document identifiers as url and the ulrs as values.
      * @return a new instance of {@code DocumentParser} for the given class.
      * @throws NullPointerException  if {@code cls} and/or {@code in} are {@code null}.
      * @throws IllegalStateException if something goes wrong in instantiating the class.

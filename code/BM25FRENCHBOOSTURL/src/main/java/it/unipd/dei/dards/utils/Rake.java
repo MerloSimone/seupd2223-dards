@@ -25,6 +25,10 @@ public class Rake {
      */
     private final String stoplistPath;
 
+    /**
+     *  Creates an instance of Rake
+     * @param stoplistPath the path of the stoplist
+     */
     public Rake(final String stoplistPath){
 
         if(stoplistPath==null) throw new NullPointerException("stoplistPath cannot be null");
@@ -34,7 +38,11 @@ public class Rake {
     }
 
 
-
+    /**
+     * Creates a regular expression fo the stopwords
+     * @return a string corresponding to the regular expression
+     * @throws IOException if some error occurs reading the stopwords
+     */
     private String buildStopwordRegex() throws IOException{
 
         InputStream stream = this.getClass().getResourceAsStream(stoplistPath);
@@ -55,6 +63,11 @@ public class Rake {
     }
 
 
+    /**
+     *  Loads the stopwords from the specified file
+     * @return ArrayList containing the stopwords
+     * @throws IOException if some error occurs reding the stopwords
+     */
     private ArrayList<String> loadStopwords() throws IOException{
         InputStream stream = Rake.class.getClassLoader().getResourceAsStream(stoplistPath);
         String line;
@@ -213,6 +226,7 @@ public class Rake {
      *
      * @param text text from which keywords will be retrieved
      * @return Hashmap of keywords and score associated to each token string
+     * @throws IOException in case some i/o error occurs
      */
     public LinkedHashMap<String, Double> getKeywordsFromText(String text) throws IOException{
         String[] sentences = this.getSentences(text);

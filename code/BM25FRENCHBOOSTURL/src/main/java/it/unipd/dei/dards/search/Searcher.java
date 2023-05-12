@@ -168,6 +168,7 @@ public class Searcher {
      * @param runID            the identifier of the run to be created.
      * @param runPath          the path where to store the run.
      * @param maxDocsRetrieved the maximum number of documents to be retrieved.
+     * @param indexedDocs      the number of document indexed by the indexer.
      * @throws NullPointerException     if any of the parameters is {@code null}.
      * @throws IllegalArgumentException if any of the parameters assumes invalid values.
      */
@@ -347,6 +348,8 @@ public class Searcher {
      * @param a                 the analyzer for the reranking
      * @param ramBuffer         the size of the ramBuffer for the rerank
      * @param reindexPath       the path for the index used in the reranking
+     * @param rerankedDocs      the number of docs to rerank
+     * @param indexedDocs       the number of docs indexed by the indexer
      * @throws NullPointerException     if any of the parameters is {@code null}.
      * @throws IllegalArgumentException if any of the parameters assumes invalid values.
      */

@@ -50,11 +50,12 @@ public class LongEvalParser extends it.unipd.dei.dards.parse.DocumentParser {
      * Creates a new LongEval Corpus document parser.
      *
      * @param in the reader to the document(s) to be parsed.
+     * @param urlMap the map containing the document identifiers as url and the ulrs as values.
      * @throws NullPointerException     if {@code in} is {@code null}.
      * @throws IllegalArgumentException if any error occurs while creating the parser.
      */
-    public LongEvalParser(final Reader in, final HashMap<String,String> urlList) {
-        super(new BufferedReader(in),urlList);
+    public LongEvalParser(final Reader in, final HashMap<String,String> urlMap) {
+        super(new BufferedReader(in),urlMap);
 
     }
 

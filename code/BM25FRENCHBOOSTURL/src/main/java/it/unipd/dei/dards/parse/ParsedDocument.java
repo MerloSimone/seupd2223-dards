@@ -75,6 +75,7 @@ public class ParsedDocument {
      *
      * @param id   the unique document identifier.
      * @param body the body of the document.
+     * @param url the url of the document.
      * @throws NullPointerException  if {@code id} and/or {@code body} are {@code null}.
      * @throws IllegalStateException if {@code id} and/or {@code body} are empty.
      */

@@ -14,12 +14,16 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class providing some utilities
+ */
 public class StatsUtils {
     /**
      * This method calculates the TF-IDF score for each terms in the indexed
-     * documents
+     * documents. Note that the TF is not computed as a proper term frequency but as an overall therm frequency in the entire collection.
      *
      * @param indexPath the path of the index
+     * @param expectedDocs the expected docs to compute the statistics for.
      *
      * @return - Hashmap of TF-IDF score per each term
      *

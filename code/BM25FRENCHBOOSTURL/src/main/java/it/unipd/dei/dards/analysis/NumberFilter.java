@@ -8,10 +8,17 @@ import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
 
 import java.io.IOException;
 
+/**
+ *  Class that implements a filter that removes all the numbers from the token stream
+ */
 public class NumberFilter extends FilteringTokenFilter {
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
     private final TypeAttribute typeAttribute = addAttribute(TypeAttribute.class);
 
+    /**
+     * Creates a NumberFilter
+     * @param ts the TokenStream
+     */
     public NumberFilter(TokenStream ts){
         super(ts);
     }
