@@ -1,0 +1,15 @@
+http
+https
+html
+page
+index.php
+tag
+viewtopic.php
+the
+of
+and
+to
+htm
+spip.php
+showthread.php
+www
