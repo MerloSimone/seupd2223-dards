@@ -1,0 +1,14 @@
+car, automobile, machine
+watercolour, art, portrait, picture
+arena, field
+hire, lease
+price, cost, amount
+territorial, regional, provincial
+estimation, evaluation, assessment
+war, battle, fight
+weather, climate
+job, work
+diatomaceous, grain, supplement, insecticide
+oil, gas oil, diesel, fuel
+energie => energies
+loa => loan
