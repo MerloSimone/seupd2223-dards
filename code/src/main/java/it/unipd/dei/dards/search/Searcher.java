@@ -61,7 +61,7 @@ import com.univocity.parsers.tsv.TsvParserSettings;
 public class Searcher {
 
     /**
-     * The fields of the typical TREC topics.
+     * The fields of the LongEval topics.
      *
      * @author DARDS
      * @version 1.00
@@ -74,15 +74,6 @@ public class Searcher {
          */
         public static final String TITLE = "title";
 
-        /**
-         * The description of a topic.
-         */
-        public static final String DESCRIPTION = "description";
-
-        /**
-         * The narrative of a topic.
-         */
-        public static final String NARRATIVE = "narrative";
     }
 
 

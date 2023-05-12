@@ -24,8 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Provides a very basic parser for the TIPSTER corpus (FBIS, FR, FT, LATIMES), i.e. TREC Disks 4 and 5 minus
- * Congressional Record.
+ * Provides a very basic parser for the LongEval collection.
  * <p>
  * It is based on the parser <a href="https://github.com/isoboroff/trec-demo/blob/master/src/TrecDocIterator.java"
  * target="_blank">TrecDocIterator.java</a> by Ian Soboroff.
@@ -34,7 +33,7 @@ import java.util.regex.Pattern;
  * @version 1.00
  * @since 1.00
  */
-public class TipsterParser extends it.unipd.dei.dards.parse.DocumentParser {
+public class LongEvalParser extends it.unipd.dei.dards.parse.DocumentParser {
 
     /**
      * The size of the buffer for the body element.
@@ -48,13 +47,13 @@ public class TipsterParser extends it.unipd.dei.dards.parse.DocumentParser {
 
 
     /**
-     * Creates a new TIPSTER Corpus document parser.
+     * Creates a new LongEval Corpus document parser.
      *
      * @param in the reader to the document(s) to be parsed.
      * @throws NullPointerException     if {@code in} is {@code null}.
      * @throws IllegalArgumentException if any error occurs while creating the parser.
      */
-    public TipsterParser(final Reader in) {
+    public LongEvalParser(final Reader in) {
         super(new BufferedReader(in));
     }
 
@@ -131,7 +130,7 @@ public class TipsterParser extends it.unipd.dei.dards.parse.DocumentParser {
         Reader reader = new FileReader(
                 "./input/English/Documents/Trec/collector_kodicare_1.txt");
 
-        TipsterParser p = new TipsterParser(reader);
+        LongEvalParser p = new LongEvalParser(reader);
 
         for (it.unipd.dei.dards.parse.ParsedDocument d : p) {
             System.out.printf("%n%n------------------------------------%n%s%n%n%n", d.toString());
