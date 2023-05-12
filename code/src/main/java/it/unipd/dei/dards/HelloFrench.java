@@ -29,6 +29,9 @@ import org.apache.lucene.analysis.fr.FrenchAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.search.similarities.*;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryUsage;
+import java.lang.management.OperatingSystemMXBean;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -49,12 +52,13 @@ public class HelloFrench {
      * @throws Exception if something goes wrong while indexing and searching.
      */
     public static void main(String[] args) throws Exception {
-
+        OperatingSystemMXBean bean =(com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+        MemoryUsage heapMemoryUsage= ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
         final float k1=0.95f;
         final float b=0.76f;
         final int ramBuffer = 256;
         final String docsPath = "./input/French/Documents/Trec";
-        final String indexPath = "code/experiment/index-url-french";
+        final String indexPath = "code/experiment/index-test";
 
         final String extension = "txt";
         final int expectedDocs = 1570734;
@@ -63,7 +67,8 @@ public class HelloFrench {
         //final Analyzer a = new FrenchAnalyzer();
 
         final Analyzer a = new MyFrenchAnalyzer();
-
+        System.out.println(bean.getSystemLoadAverage());
+        System.out.println(heapMemoryUsage.getUsed());
         //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new ClassicSimilarity()});
         final Similarity sim = new BM25Similarity();//try to personalize parameters
 
@@ -72,7 +77,7 @@ public class HelloFrench {
 
         final String runPath = "code/experiment";
 
-        final String runID = "seupd2223-dards-url-classic";//best is equalboost
+        final String runID = "seupd2223-dards-test";//best is equalboost
 
         final int maxDocsRetrieved = 1000;
 
