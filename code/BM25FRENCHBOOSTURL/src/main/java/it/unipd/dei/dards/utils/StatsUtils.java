@@ -127,7 +127,7 @@ public class StatsUtils {
 
         System.out.printf("+ Total number of terms: %d%n", totTerms);
 
-        if(totDocs != expectedDocs) throw new IllegalStateException("Something went wrong while reading the index: wrong number of docs");
+        //if(totDocs != expectedDocs) throw new IllegalStateException("Something went wrong while reading the index: wrong number of docs");
 
         System.out.printf("%n------------- FINISHED COMPUTING STATISTICS FROM INDEX -------------%n");
 

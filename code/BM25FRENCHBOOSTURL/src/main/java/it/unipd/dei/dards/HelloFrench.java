@@ -30,7 +30,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * Introductory example on how to use <a href="https://lucene.apache.org/" target="_blank">Apache Lucene</a> to index
- * and search the TIPSTER corpus.
+ * and search the LongEval corpus.
  *
  * @author DARDS
  * @version 1.0
@@ -46,13 +46,9 @@ public class HelloFrench {
      * @throws Exception if something goes wrong while indexing and searching.
      */
     public static void main(String[] args) throws Exception {
-        OperatingSystemMXBean bean =(com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-        MemoryUsage heapMemoryUsage= ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
-        final float k1=0.95f;
-        final float b=0.76f;
         final int ramBuffer = 256;
-        final String docsPath = "./input/French/Documents/Trec";
-        final String indexPath = "code/experiment/index-test";
+        final String docsPath = "../../input/French/Documents/Trec";
+        final String indexPath = "../../code/experiment/index-BM25FRENCHBOOSTURL";
 
         final String extension = "txt";
         final int expectedDocs = 1570734;
@@ -61,30 +57,30 @@ public class HelloFrench {
         //final Analyzer a = new FrenchAnalyzer();
 
         final Analyzer a = new MyFrenchAnalyzer();
-        System.out.println(bean.getSystemLoadAverage());
-        System.out.println(heapMemoryUsage.getUsed());
+
         //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new ClassicSimilarity()});
         final Similarity sim = new BM25Similarity();//try to personalize parameters
 
-        final String topics = "./input/French/Queries/train.tsv";
-        final String urlFile = "./input/French/urls.txt";
+        final String topics = "../../input/French/Queries/heldout.tsv";
+        final String urlFile = "../../input/French/urls.txt";
 
-        final String runPath = "code/experiment";
+        final String runPath = "../../code/experiment";
 
-        final String runID = "seupd2223-dards-test";//best is equalboost
+        final String runID = "DARDS_BM25FRENCHBOOSTURL";//best is equalboost
 
         final int maxDocsRetrieved = 1000;
 
-        final int expectedTopics = 672;
+        final int expectedTopics = 98;
 
         // indexing
         final DirectoryIndexer i = new DirectoryIndexer(a, sim, ramBuffer, indexPath, docsPath,urlFile, extension, charsetName,
                                                         expectedDocs, LongEvalParser.class);
-        i.index();
+        //i.index();
 
         // searching
         final Searcher s = new Searcher(a, sim, indexPath, topics, expectedTopics, runID, runPath, maxDocsRetrieved,expectedDocs);
         s.search();
+
 
     }
 
