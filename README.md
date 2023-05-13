@@ -1,8 +1,16 @@
-# Search Engines (SE) - Repository Template
+# Search Engines (SE) - DARDS IR systems for LongEval Repository
 
-This repository is a template repository for the homeworks to be developed in the [Search Engines](https://iiia.dei.unipd.it/education/search-engines/) course.
+This repository contains systems developed as part of homeworks for the [Search Engines](https://iiia.dei.unipd.it/education/search-engines/) course.
 
-The homeworks are carried out by groups of students and consists in participating to one of the labs organized yearly by [CLEF](https://www.clef-initiative.eu/) (Conference and Labs of the Evaluation Forum).
+This work's final goal is to produce a valid submission for [CLEF](https://www.clef-initiative.eu/)'s LongEval project.
+
+Authors of this repository are the students part of the DARDS group:
+
+*	Angela Pomaro
+*	Daniel Carlesso
+*	Riccardo Gobbo
+*	Simone Merlo
+*	Diego Spinosa
 
 *Search Engines* is a course of the
 
