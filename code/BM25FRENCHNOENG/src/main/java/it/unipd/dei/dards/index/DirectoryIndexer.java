@@ -20,10 +20,14 @@ import it.unipd.dei.dards.parse.DocumentParser;
 import it.unipd.dei.dards.parse.ParsedDocument;
 import it.unipd.dei.dards.parse.LongEvalParser;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
+import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.en.KStemFilterFactory;
+import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -34,10 +38,13 @@ import org.apache.lucene.search.similarities.*;
 import org.apache.lucene.store.FSDirectory;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+
+import static it.unipd.dei.dards.analysis.AnalyzerUtil.loadStopList;
 
 /**
  * Indexes documents processing a whole directory tree.
@@ -270,6 +277,40 @@ public class DirectoryIndexer {
                     Document doc = null;
 
                     for (ParsedDocument pd : dp) {
+                        String body = pd.getBody();
+
+                        int enTokens = 0;
+                        int frTokens = 0;
+
+                        //Filtro stopwords (inglese)
+                        Tokenizer source = new StandardTokenizer();
+                        source.setReader(new StringReader(body));
+                        TokenStream tokStream = new StopFilter(source,loadStopList("smart.txt"));
+                        tokStream.reset();
+                        //CharTermAttribute token = tokStream.getAttribute(CharTermAttribute.class);
+                        while (tokStream.incrementToken()){
+                            enTokens++;
+                        }
+                        tokStream.end();
+                        tokStream.close();
+
+                        //Filtro stopwords (francese)
+                        source = new StandardTokenizer();
+                        source.setReader(new StringReader(body));
+                        tokStream = new StopFilter(source,loadStopList("stopwords-fr.txt"));
+                        tokStream.reset();
+                        //token = tokStream.getAttribute(CharTermAttribute.class);
+                        while (tokStream.incrementToken()){
+                            frTokens++;
+                        }
+                        tokStream.end();
+                        tokStream.close();
+
+                        if(enTokens*1.5 < frTokens){    //se mi ritrovo meno token da eliminaz stopword inglesi, ho trovato un doc inglese:
+                            System.out.println(String.format("Document %s is english (skipped)",pd.getIdentifier()));
+                            continue;
+                        }
+
 
                         doc = new Document();
 
@@ -277,7 +318,7 @@ public class DirectoryIndexer {
                         doc.add(new StringField(ParsedDocument.FIELDS.ID, pd.getIdentifier(), Field.Store.YES));
 
                         // add the document body
-                        doc.add(new BodyField(pd.getBody()));
+                        doc.add(new BodyField(body));
                         //System.out.println(pd.getIdentifier());
                         //System.out.println(pd.getBody());
 
