@@ -15,7 +15,7 @@ public class TranslationScript {
 
     public static String translate(String langFrom, String langTo, String text) throws IOException {
         // INSERT YOU URL HERE
-        String urlStr = "https://script.google.com/macros/s/AKfycbzq2kAPMVypjdniez1vojiBbbxxGjtTr_CeXNNahqr9MnbH-qM0v94HOxH9wCr15M-5/exec" +
+        String urlStr = "https://script.google.com/macros/s/AKfycbyyPmZeqL9n47edbRRJyMr6ote6Hju7gbziqA0InvOAJnk4OXOi2urWZuLbQf9uGB7APA/exec" +
                 "?q=" + URLEncoder.encode(text, "UTF-8") +
                 "&target=" + langTo +
                 "&source=" + langFrom;

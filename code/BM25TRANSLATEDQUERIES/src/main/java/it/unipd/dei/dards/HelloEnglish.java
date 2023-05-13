@@ -50,11 +50,11 @@ public class HelloEnglish {
     public static void main(String[] args) throws Exception {
 
         final int ramBuffer = 256;
-        final String docsPath = "./input/English/Documents/Trec";
-        final String indexPath = "code/experiment/index-stop-stem";
+        final String docsPath = "../../input-test/test-collection/B-Long-September/English/Documents/Trec";
+        final String indexPath = "../../code/experiment/index-BM25TRANSLATEDQUERIES";
 
         final String extension = "txt";
-        final int expectedDocs = 1570734;
+        final int expectedDocs = 1593376;
         final String charsetName = StandardCharsets.UTF_8.name();
 
         final Analyzer a_docs = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class)
@@ -81,15 +81,15 @@ public class HelloEnglish {
         //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new DFRSimilarity(new BasicModelIne(), new AfterEffectL(), new NormalizationH2(0.9F))});
         final Similarity sim = new BM25Similarity();
 
-        final String topics = "./input/English/Queries/train.tsv";
+        final String topics = "../../input-test/test-collection/B-Long-September/French/Queries/test09.tsv";
 
-        final String runPath = "code/experiment";
+        final String runPath = "../../code/experiment";
 
-        final String runID = "seupd2223-dards";
+        final String runID = "DARDS_BM25TRANSLATEDQUERIES";
 
         final int maxDocsRetrieved = 1000;
 
-        final int expectedTopics = 50;
+        final int expectedTopics = 882;
 
         // indexing
         final DirectoryIndexer i = new DirectoryIndexer(a_docs, sim, ramBuffer, indexPath, docsPath, extension, charsetName,

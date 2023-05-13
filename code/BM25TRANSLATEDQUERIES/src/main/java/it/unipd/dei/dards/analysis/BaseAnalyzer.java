@@ -74,7 +74,7 @@ public class BaseAnalyzer extends Analyzer {
 
         //tokens = new LengthFilter(tokens, 4, 10);
 
-        //tokens = new EnglishPossessiveFilter(tokens);
+        tokens = new EnglishPossessiveFilter(tokens);
 
         tokens = new StopFilter(tokens, loadStopList("smart.txt"));
 
