@@ -46,12 +46,48 @@ public class HelloFrench {
      * @throws Exception if something goes wrong while indexing and searching.
      */
     public static void main(String[] args) throws Exception {
+
+        int expectedTopics = 672;
+        int expectedDocs = 1570734;
+        String docsPath = "../../input-test/test-collection/B-Long-September/French/Documents/Trec";
+        String topics = "../../input-test/test-collection/B-Long-September/French/Queries/test09.tsv";
+        String urlFile = "../../input/French/urls.txt";
+
+        System.out.println("IF YOU RUN THIS JAR WITH A JDK DIFFERENT FROM 20 OR 17 YOU MIGHT ENCOUNTER SOME ERRORS");
+
+        //comment this if-else statement if you want to use this class using your IDE instead of using the jar file
+        if(args.length == 5 ){
+            try{
+                docsPath=args[0];
+                expectedDocs=Integer.parseInt(args[1]);
+                topics=args[2];
+                expectedTopics=Integer.parseInt(args[3]);
+                urlFile=args[4];
+            }catch (Exception e){
+                System.out.println("Usage must be: java -jar <jar-file-name> <path-to-documents-folder> <number-of-expected-documents> <path-to-queries-file> <number-of-queries> <path-to-url-file>");
+                System.out.println("Usage example: java -jar .\\dards-1.00-jar-with-dependencies.jar D:\\input\\French\\Documents\\Trec 1570734 D:\\input\\French\\Queries\\train.tsv 672 D:\\input\\French\\urls.txt");
+                System.out.println("NOTE THAT:");
+                System.out.println("<path-to-documents-folder> must be a path to a folder containing the documents in txt files");
+                System.out.println("<path-to-queries-file> must be a path to a file ending with tsv extension (the extension must be specified)");
+                System.out.println("<path-to-url-file> must be a path to a file ending with txt extension (the extension must be specified)");
+                return;
+            }
+        }else{
+            System.out.println("Usage must be: java -jar <jar-file-name> <path-to-documents-folder> <number-of-expected-documents> <path-to-queries-file> <number-of-queries>");
+            System.out.println("Usage example: java -jar .\\dards-1.00-jar-with-dependencies.jar D:\\input\\French\\Documents\\Trec 1570734 D:\\input\\French\\Queries\\train.tsv 672 D:\\input\\French\\urls.txt");
+            System.out.println("NOTE THAT:");
+            System.out.println("<path-to-documents-folder> must be a path to a folder containing the documents in txt files");
+            System.out.println("<path-to-queries-file> must be a path to a file ending with tsv extension (the extension must be specified)");
+            System.out.println("<path-to-url-file> must be a path to a file ending with txt extension (the extension must be specified)");
+            return;
+        }
+
         final int ramBuffer = 256;
-        final String docsPath = "../../input/French/Documents/Trec";
-        final String indexPath = "../../code/experiment/index-BM25FRENCHBOOSTURL";
+
+        final String indexPath = "index-BM25FRENCHBOOSTURL";
 
         final String extension = "txt";
-        final int expectedDocs = 1570734;
+        //final int expectedDocs = 1570734;
         final String charsetName = StandardCharsets.UTF_8.name(); //"ISO-8859-1";
 
         //final Analyzer a = new FrenchAnalyzer();
@@ -61,21 +97,21 @@ public class HelloFrench {
         //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new ClassicSimilarity()});
         final Similarity sim = new BM25Similarity();//try to personalize parameters
 
-        final String topics = "../../input/French/Queries/heldout.tsv";
-        final String urlFile = "../../input/French/urls.txt";
 
-        final String runPath = "../../code/experiment";
+
+
+        final String runPath = ".";
 
         final String runID = "DARDS_BM25FRENCHBOOSTURL";//best is equalboost
 
         final int maxDocsRetrieved = 1000;
 
-        final int expectedTopics = 98;
+        //final int expectedTopics = 98;
 
         // indexing
         final DirectoryIndexer i = new DirectoryIndexer(a, sim, ramBuffer, indexPath, docsPath,urlFile, extension, charsetName,
                                                         expectedDocs, LongEvalParser.class);
-        //i.index();
+        i.index();
 
         // searching
         final Searcher s = new Searcher(a, sim, indexPath, topics, expectedTopics, runID, runPath, maxDocsRetrieved,expectedDocs);

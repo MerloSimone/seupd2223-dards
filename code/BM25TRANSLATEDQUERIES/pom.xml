@@ -30,19 +30,32 @@
 			<organizationUrl>http://dei.unipd.it/</organizationUrl>
 		</developer>
 		<developer>
-			<id>dan</id>
+			<id>ricca</id>
+			<name>Riccardo Gobbo</name>
+			<email>riccardo.gobbo.2@studenti.unipd.it</email>
+			<organization>University of Padua, Italy</organization>
+			<organizationUrl>http://dei.unipd.it/</organizationUrl>
+		</developer>
+		<developer>
+			<id>spino</id>
+			<name>Diego Spinosa</name>
+			<email>diego.spinosa@studenti.unipd.it</email>
+			<organization>University of Padua, Italy</organization>
+			<organizationUrl>http://dei.unipd.it/</organizationUrl>
+		</developer>
+		<developer>
+			<id>daniel</id>
 			<name>Daniel Carlesso</name>
 			<email>daniel.carlesso@studenti.unipd.it</email>
 			<organization>University of Padua, Italy</organization>
 			<organizationUrl>http://dei.unipd.it/</organizationUrl>
 		</developer>
 		<developer>
-			<id>pc</id>
-			<name>placeholder</name>
-			<email>placeholder@dei.unipd.it</email>
-			<url>http://placeholder/</url>
-			<organization>University of Padua, Italy</organization>
-			<organizationUrl>http://dei.unipd.it/</organizationUrl>
+			<id>angela</id>
+			<name>Angela Pomaro</name>
+			<email>angela.pomaro@diag.uniroma1.it</email>
+			<organization>University of Rome La Sapienza, Italy</organization>
+			<organizationUrl>http://uniroma1.it/</organizationUrl>
 		</developer>
 	</developers>
 
@@ -127,6 +140,11 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>3.5.0</version>
 				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>it.unipd.dei.dards.HelloEnglish</mainClass>
+						</manifest>
+					</archive>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>

@@ -49,9 +49,10 @@ public class HelloFrench {
         String docsPath = "../../input-test/test-collection/B-Long-September/French/Documents/Trec";
         String topics = "../../input-test/test-collection/B-Long-September/French/Queries/test09.tsv";
 
-        System.out.println("HERE");
+        System.out.println("IF YOU RUN THIS JAR WITH A JDK DIFFERENT FROM 20 OR 17 YOU MIGHT ENCOUNTER SOME ERRORS");
 
-        if(args.length != 0){
+        //comment this if-else statement if you want to use this class using your IDE instead of using the jar file
+        if(args.length ==4 ){
             try{
                 docsPath=args[0];
                 expectedDocs=Integer.parseInt(args[1]);
@@ -60,8 +61,18 @@ public class HelloFrench {
             }catch (Exception e){
                 System.out.println("Usage must be: java -jar <jar-file-name> <path-to-documents-folder> <number-of-expected-documents> <path-to-queries-file> <number-of-queries>");
                 System.out.println("Usage example: java -jar .\\dards-1.00-jar-with-dependencies.jar D:\\input\\French\\Documents\\Trec 1570734 D:\\input\\French\\Queries\\train.tsv 672");
+                System.out.println("NOTE THAT:");
+                System.out.println("<path-to-documents-folder> must be a path to a folder containing the documents in txt files");
+                System.out.println("<path-to-queries-file> must be a path to a file ending with tsv extension (the extension must be specified)");
                 return;
             }
+        }else{
+            System.out.println("Usage must be: java -jar <jar-file-name> <path-to-documents-folder> <number-of-expected-documents> <path-to-queries-file> <number-of-queries>");
+            System.out.println("Usage example: java -jar .\\dards-1.00-jar-with-dependencies.jar D:\\input\\French\\Documents\\Trec 1570734 D:\\input\\French\\Queries\\train.tsv 672");
+            System.out.println("NOTE THAT:");
+            System.out.println("<path-to-documents-folder> must be a path to a folder containing the documents in txt files");
+            System.out.println("<path-to-queries-file> must be a path to a file ending with tsv extension (the extension must be specified)");
+            return;
         }
 
 
@@ -85,7 +96,7 @@ public class HelloFrench {
         //final String topics = "../../input/French/Queries/heldout.tsv";
 
 
-        final String runPath = "";
+        final String runPath = ".";
 
         final String runID = "DARDS_BM25FRENCHBASE";
 
