@@ -140,6 +140,11 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>3.5.0</version>
 				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>it.unipd.dei.dards.HelloFrench</mainClass>
+						</manifest>
+					</archive>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
@@ -165,6 +170,12 @@
             <artifactId>lucene-core</artifactId>
             <version>${lucene.version}</version>
         </dependency>
+
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-memory</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.lucene</groupId>

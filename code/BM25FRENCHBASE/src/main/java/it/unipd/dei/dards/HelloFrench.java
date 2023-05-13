@@ -44,14 +44,35 @@ public class HelloFrench {
      */
     public static void main(String[] args) throws Exception {
 
+        int expectedTopics = 672;
+        int expectedDocs = 1570734;
+        String docsPath = "../../input-test/test-collection/B-Long-September/French/Documents/Trec";
+        String topics = "../../input-test/test-collection/B-Long-September/French/Queries/test09.tsv";
+
+        System.out.println("HERE");
+
+        if(args.length != 0){
+            try{
+                docsPath=args[0];
+                expectedDocs=Integer.parseInt(args[1]);
+                topics=args[2];
+                expectedTopics=Integer.parseInt(args[3]);
+            }catch (Exception e){
+                System.out.println("Usage must be: java -jar <jar-file-name> <path-to-documents-folder> <number-of-expected-documents> <path-to-queries-file> <number-of-queries>");
+                System.out.println("Usage example: java -jar .\\dards-1.00-jar-with-dependencies.jar D:\\input\\French\\Documents\\Trec 1570734 D:\\input\\French\\Queries\\train.tsv 672");
+                return;
+            }
+        }
+
+
         final int ramBuffer = 256;
         //final String docsPath = "../../input/French/Documents/Trec";
-        final String docsPath = "../../input-test/test-collection/B-Long-September/French/Documents/Trec";
 
-        final String indexPath = "../../code/experiment/index-BM25FRENCHBASE";
+
+        final String indexPath = "index-BM25FRENCHBASE";
 
         final String extension = "txt";
-        final int expectedDocs = 1570734;
+
         final String charsetName = StandardCharsets.UTF_8.name(); //"ISO-8859-1";
 
         //final Analyzer a = new FrenchAnalyzer();
@@ -62,15 +83,15 @@ public class HelloFrench {
         final Similarity sim = new BM25Similarity();//try to personalize parameters
 
         //final String topics = "../../input/French/Queries/heldout.tsv";
-        final String topics = "../../input-test/test-collection/B-Long-September/French/Queries/test09.tsv";
 
-        final String runPath = "../../code/experiment";
+
+        final String runPath = "";
 
         final String runID = "DARDS_BM25FRENCHBASE";
 
         final int maxDocsRetrieved = 1000;
 
-        final int expectedTopics = 672;
+
 
         // indexing
         final DirectoryIndexer i = new DirectoryIndexer(a, sim, ramBuffer, indexPath, docsPath, extension, charsetName,
