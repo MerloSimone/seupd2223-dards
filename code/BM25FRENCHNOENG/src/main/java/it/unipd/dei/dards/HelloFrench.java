@@ -48,7 +48,7 @@ public class HelloFrench {
         //final String docsPath = "../../input/French/Documents/Trec";
         final String docsPath = "../../input-test/test-collection/B-Long-September/French/Documents/Trec";
 
-        final String indexPath = "../../code/experiment/index-BM25FRENCHBASE";
+        final String indexPath = "../../code/experiment/index-BM25FRENCHNOENG";
 
         final String extension = "txt";
         final int expectedDocs = 1570734;
@@ -66,7 +66,7 @@ public class HelloFrench {
 
         final String runPath = "../../code/experiment";
 
-        final String runID = "DARDS_BM25FRENCHBASE";
+        final String runID = "DARDS_BM25FRENCHNOENG";
 
         final int maxDocsRetrieved = 1000;
 
