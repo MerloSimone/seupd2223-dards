@@ -1,6 +1,5 @@
 import os
 from tqdm import tqdm
-from sys import argv
 from shutil import rmtree
 from re import findall, search
 from string import punctuation
@@ -19,11 +18,9 @@ doc_end = "</DOC>"
 text_tag = "</TEXT>"
 tags_pattern_all="<DOC|<TEXT|<\/DOC|<\/TEXT"
 
-# Path of the files containing documents 
-doc_path = "B-Long-September\\French\\Documents\\Trec\\"
 
 # Threshold for words frequencies
-threshold = 0.11
+threshold = 0.15
 
 """
     Create documents from test collection
@@ -44,7 +41,6 @@ def create_doc(file) -> str:
         if search(doc_end, line) is not None:
             return doc
     return None
-
 
 
 """
@@ -88,29 +84,32 @@ def check_doc(doc: str) -> bool:
                 print("Some error occurred while parsing a document. Error:", e)
                 pass
 
-    # Aggiungere print della parola che ha causato l'esclusione del documento
-    if max(words.values())/len(words) > threshold:
+    frequencies = words.values()
+    if len(frequencies) < 1: 
+        print(f"[!] Zero length for document {doc_id}")
+        return False, None, None, None, None
+    
+    max_freq = max(frequencies)
+    if max_freq/len(words) > threshold:
         try:
-            max_count = max(words.values())
-            index_max_count =  list(words.values()).index(max_count)
+            index_max_count =  list(frequencies).index(max_freq)
             detected_word = list(words.keys())[index_max_count]
             # Relevant, word, doc_id, word_count, words_count, ratio
-            return False, detected_word, doc_id, words[detected_word], len(words), max_count/len(words)
+            return False, detected_word, doc_id, words[detected_word], len(words)
         
         except Exception as e:
             print("[!] Error occurred while searching for the word:", e)
 
-    return True, None, None, None, None, None
-
-    # return max(words.values())/len(words) < 0.11
+    return True, None, None, None, None
 
 
 """
     Main function used to parse all the files in the input folder
 """
-def analyze_docs(dir):
-    print("[-] Analyzing the documents..")
-    path = os.path.join("docs_parsed_B")
+def analyze_docs(dir, id):
+    print(f"[-] Analyzing the documents task {id}..")
+    path = os.path.join(f"docs_parsed_{id}")
+    file_res = open(f"res-0.15-less4-{id}.txt", "w", encoding='utf-8')
 
     # Removing old folder and creating a new one where parsed files are saved
     try:
@@ -132,34 +131,29 @@ def analyze_docs(dir):
     tot_doc = 0                         # Total number of document parsed
     doc_kept = 0                        # Total number of kept document 
 
-
+    file_res.write("[+] The discarded docs are the following:\nFILE\tDOC\tWORD\n")
     # For every file in the dir
     for file_name in tqdm(document_list):
         doc_num = 1                     # ID of the document in a file
         try:
-            file = open(doc_path + str(file_name), 'r', encoding="utf-8")       # Input file
+            file = open(dir + str(file_name), 'r', encoding="utf-8")       # Input file
             file_out = open(path + "\\" + file_name, 'w', encoding="utf-8")     # Output file
 
-            # i = 1       # Number of line (file has always the same structure)
-            # doc = ""    
             while (doc := create_doc(file)) is not None:
-                # doc += line
-                # if i % 7 == 0:      # The entire document (tags included) is created 
                 try:
-                    
                     # Relevant, word, doc_id, word_count, words_count, ratio
-                    res, word, doc_id, word_count, words_count, ratio = check_doc(doc)  # Check if it's relevant and what is the possible word that makes it excluded
+                    res, word, doc_id, word_count, words_count = check_doc(doc)  # Check if it's relevant and what is the possible word that makes it excluded
                     if res:                                             # If relevant save it
                         file_out.write(doc)
                         doc_kept += 1
                     else: 
-                        discarded_docs[doc_id] = [file_name, word, word_count, words_count, ratio]   # If not relevant, add it to the list of ignored docs
+                        discarded_docs[doc_id] = [file_name, word, word_count, words_count]   # If not relevant, add it to the list of ignored docs
+                        file_res.write(f"{file_name}\t{doc_id}\t{word}\t{word_count}/{words_count}\t{str(round(word_count/words_count,4)).replace('.', ',')}\n")
+
                 except Exception as e:
                     print(f"[!] Some error occurred while reading the file {file_name} doc {doc_num}. Error:", e)
                     pass
-                # doc = ""
                 doc_num += 1
-                # i += 1    
 
             file.close()
             file_out.close()
@@ -168,46 +162,9 @@ def analyze_docs(dir):
             pass
         
         tot_doc += doc_num  # Update number of documents read
-        
 
-    # Print discarded docs
-    # [file_name, word, word_count, words_count, ratio]
-    print("[+] The discarded docs are the following:\nFILE\tDOC\tWORD")
-    
-    for doc in discarded_docs.keys():
-        try:
-            info = discarded_docs.get(doc)
-            print(f"{info[0]}\t{doc}\t{info[1]}\t{info[2]}/{info[3]}\t{str(info[4]).replace('.', ',')}")
-        except Exception as e:
-            print(f"[!] An error occurred with doc {doc}. Error: {e}")
-            pass
-    """
-        Decomment if the qrels are not available
-    """
-    """
-    # Check which documents have erroneously been discarded
-    file_qrels = open("input\\French\\Qrels\\train.txt", "r", encoding="utf-8")
-    doc_pattern = "doc\d+ \d+"
-
-    # q06223196 0 doc062200112743 0
-    print("[+] Comparison with qrels:")
-    for true_res in file_qrels.readlines():
-        try:
-            if len(res := findall(doc_pattern, true_res)) > 0:
-                doc = str(res[0]).split()[0]                    # doc062200112743
-                rel_num = int(str(res[0]).split()[1])           # 0 (not relevant), 1 (slightly relevant), 2 (highly relevant)
-
-                # Detect if a document is relevant but it has been discarded
-                if rel_num > 0 and discarded_docs.get(doc) != None:
-                    info = discarded_docs.get(doc)
-                    print(f"{info[0]}\t{doc}\t{info[1]}\t{info[2]}/{info[3]}\t{str(info[4]).replace('.', ',')}")
-        except Exception as e:
-            print(f"[!] Error reading line {true_res}. Error: {e}")
-
-    file_qrels.close()
-    """
-    print(f"[+] {len(document_list)} files analyzed, {tot_doc} documents analyzed, {doc_kept} documents kept")       
-
+    file_res.write(f"[+] {len(document_list)} files analyzed, {tot_doc} documents analyzed, {doc_kept}={round(doc_kept/tot_doc,4)} documents kept, {tot_doc-doc_kept}={round((tot_doc-doc_kept)/tot_doc,4)} document removed\n")       
+    file_res.close()
 
 """
     Function to add the words to ignore during the parsing of the documents
@@ -241,7 +198,10 @@ if __name__ == "__main__":
         add_useless_words(files)
 
         # Parsing docs
-        analyze_docs(doc_path)
+        paths = ["A-Short-July\\French\\Documents\\Trec\\", "B-Long-September\\French\\Documents\\Trec\\"]
+        ids = ['A', 'B']
+        for p, id in zip(paths, ids):
+            analyze_docs(p, id)
         
         print("[+] Parsing done!")
     except Exception as e:
