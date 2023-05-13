@@ -18,22 +18,16 @@ package it.unipd.dei.dards;
 
 import it.unipd.dei.dards.analysis.MyFrenchAnalyzer;
 import it.unipd.dei.dards.index.DirectoryIndexer;
-import it.unipd.dei.dards.parse.TipsterParser;
+import it.unipd.dei.dards.parse.LongEvalParser;
 import it.unipd.dei.dards.search.Searcher;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
-import org.apache.lucene.analysis.core.StopFilterFactory;
-import org.apache.lucene.analysis.custom.CustomAnalyzer;
-import org.apache.lucene.analysis.en.KStemFilterFactory;
-import org.apache.lucene.analysis.fr.FrenchAnalyzer;
-import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.search.similarities.*;
 
 import java.nio.charset.StandardCharsets;
 
 /**
  * Introductory example on how to use <a href="https://lucene.apache.org/" target="_blank">Apache Lucene</a> to index
- * and search the TIPSTER corpus.
+ * and search the LongEval corpus.
  *
  * @author DARDS
  * @version 1.0
@@ -50,11 +44,11 @@ public class HelloFrench {
      */
     public static void main(String[] args) throws Exception {
 
-        final float k1=0.95f;
-        final float b=0.76f;
         final int ramBuffer = 256;
-        final String docsPath = "./input/French/Documents/Trec";
-        final String indexPath = "code/experiment/index-base-french";
+        //final String docsPath = "../../input/French/Documents/Trec";
+        final String docsPath = "../../input-test/test-collection/B-Long-September/French/Documents/Trec";
+
+        final String indexPath = "../../code/experiment/index-BM25FRENCHBASE";
 
         final String extension = "txt";
         final int expectedDocs = 1570734;
@@ -64,14 +58,15 @@ public class HelloFrench {
 
         final Analyzer a = new MyFrenchAnalyzer();
 
-        //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new ClassicSimilarity()});
+        //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new DFRSimilarity(new BasicModelIne(), new AfterEffectL(), new NormalizationH2(0.9F))});
         final Similarity sim = new BM25Similarity();//try to personalize parameters
 
-        final String topics = "./input/French/Queries/train.tsv";
+        //final String topics = "../../input/French/Queries/heldout.tsv";
+        final String topics = "../../input-test/test-collection/B-Long-September/French/Queries/test09.tsv";
 
-        final String runPath = "code/experiment";
+        final String runPath = "../../code/experiment";
 
-        final String runID = "seupd2223-dards";
+        final String runID = "DARDS_BM25FRENCHBASE";
 
         final int maxDocsRetrieved = 1000;
 
@@ -79,7 +74,7 @@ public class HelloFrench {
 
         // indexing
         final DirectoryIndexer i = new DirectoryIndexer(a, sim, ramBuffer, indexPath, docsPath, extension, charsetName,
-                                                        expectedDocs, TipsterParser.class);
+                                                        expectedDocs, LongEvalParser.class);
         i.index();
 
         // searching
