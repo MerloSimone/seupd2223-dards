@@ -18,33 +18,26 @@ package it.unipd.dei.dards.index;
 
 import it.unipd.dei.dards.parse.DocumentParser;
 import it.unipd.dei.dards.parse.ParsedDocument;
-import it.unipd.dei.dards.parse.TipsterParser;
+import it.unipd.dei.dards.parse.LongEvalParser;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.en.KStemFilterFactory;
-import org.apache.lucene.analysis.en.PorterStemFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.similarities.*;
-import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.NIOFSDirectory;
-import org.apache.lucene.util.BytesRef;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Indexes documents processing a whole directory tree.
@@ -257,6 +250,16 @@ public class DirectoryIndexer {
     }
 
 
+    /**
+     * Creates a new indexer.
+     *
+     * @param analyzer        the {@code Analyzer} to be used.
+     * @param similarity      the {@code Similarity} to be used.
+     * @param ramBufferSizeMB the size in megabytes of the RAM buffer for indexing documents.
+     * @param indexPath       the directory where to store the index.
+     * @param expectedDocs    the total number of documents expected to be indexed
+     *
+     */
     public DirectoryIndexer(final Analyzer analyzer, final Similarity similarity, final int ramBufferSizeMB,
                             final String indexPath,  final long expectedDocs) {
 
@@ -411,6 +414,8 @@ public class DirectoryIndexer {
     /**
      * Indexes the documents.
      *
+     * @param docs the list of document to add to the index.
+     *
      * @throws IOException if something goes wrong while indexing.
      */
     public void index(List<Document> docs) throws IOException {
@@ -502,7 +507,7 @@ public class DirectoryIndexer {
         final Similarity sim = new BM25Similarity();
 
         DirectoryIndexer i = new DirectoryIndexer(a, sim, ramBuffer, indexPath, docsPath, extension,
-                                                  charsetName, expectedDocs, TipsterParser.class);
+                                                  charsetName, expectedDocs, LongEvalParser.class);
 
         i.index();
 

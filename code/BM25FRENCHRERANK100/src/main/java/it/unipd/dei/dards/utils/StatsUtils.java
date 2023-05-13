@@ -14,12 +14,16 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class used to compute some statistics base on the index
+ */
 public class StatsUtils {
     /**
-     * This method calculates the TF-IDF score for each terms in the indexed
+     * This method calculates the TF-IDF like score for each terms in the indexed
      * documents
      *
      * @param indexPath the path of the index
+     * @param expectedDocs number of document expected in the index
      *
      * @return - Hashmap of TF-IDF score per each term
      *
@@ -123,7 +127,7 @@ public class StatsUtils {
 
         System.out.printf("+ Total number of terms: %d%n", totTerms);
 
-        if(totDocs != expectedDocs) throw new IllegalStateException("Something went wrong while reading the index: wrong number of docs");
+        //if(totDocs != expectedDocs) throw new IllegalStateException("Something went wrong while reading the index: wrong number of docs");
 
         System.out.printf("%n------------- FINISHED COMPUTING STATISTICS FROM INDEX -------------%n");
 

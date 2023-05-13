@@ -25,6 +25,10 @@ public class Rake {
      */
     private final String stoplistPath;
 
+    /**
+     * Creates an instance of RAKE
+     * @param stoplistPath the path to the stoplists
+     */
     public Rake(final String stoplistPath){
 
         if(stoplistPath==null) throw new NullPointerException("stoplistPath cannot be null");
@@ -213,6 +217,8 @@ public class Rake {
      *
      * @param text text from which keywords will be retrieved
      * @return Hashmap of keywords and score associated to each token string
+     *
+     * @throws IOException in case some I/O error occurs
      */
     public LinkedHashMap<String, Double> getKeywordsFromText(String text) throws IOException{
         String[] sentences = this.getSentences(text);

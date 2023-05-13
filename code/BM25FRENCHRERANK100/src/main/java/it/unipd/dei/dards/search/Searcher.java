@@ -19,17 +19,9 @@ package it.unipd.dei.dards.search;
 import it.unipd.dei.dards.analysis.MyFrenchAnalyzer;
 import it.unipd.dei.dards.index.DirectoryIndexer;
 import it.unipd.dei.dards.parse.ParsedDocument;
-import it.unipd.dei.dards.parse.TipsterParser;
-import it.unipd.dei.dards.utils.Rake;
 import it.unipd.dei.dards.utils.StatsUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
-import org.apache.lucene.analysis.core.StopFilterFactory;
-import org.apache.lucene.analysis.custom.CustomAnalyzer;
-import org.apache.lucene.analysis.en.KStemFilterFactory;
-import org.apache.lucene.analysis.en.PorterStemFilterFactory;
-import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.benchmark.quality.QualityQuery;
 import org.apache.lucene.document.Document;
@@ -38,7 +30,6 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.queryparser.classic.QueryParserBase;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.*;
 import org.apache.lucene.store.FSDirectory;
@@ -177,6 +168,7 @@ public class Searcher {
      * @param runID            the identifier of the run to be created.
      * @param runPath          the path where to store the run.
      * @param maxDocsRetrieved the maximum number of documents to be retrieved.
+     * @param indexedDocs the nuber of indexed docs
      * @throws NullPointerException     if any of the parameters is {@code null}.
      * @throws IllegalArgumentException if any of the parameters assumes invalid values.
      */
@@ -356,6 +348,8 @@ public class Searcher {
      * @param a                 the analyzer for the reranking
      * @param ramBuffer         the size of the ramBuffer for the rerank
      * @param reindexPath       the path for the index used in the reranking
+     * @param indexedDocs       the number of indexed docs.
+     * @param rerankedDocs      the number of documents to rerank.
      * @throws NullPointerException     if any of the parameters is {@code null}.
      * @throws IllegalArgumentException if any of the parameters assumes invalid values.
      */
