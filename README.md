@@ -48,12 +48,12 @@ In order to compile our systems you must install Maven (we used Maven version 3.
 
 Compiling:
 * clone the bitbucket folder (git clone https://username@bitbucket.org/upd-dei-stud-prj/seupd2223-dards.git)
-* go into the folder code/\<name-of-system>/ 
+* go into the folder code/\<name-of-system\>/ 
 * run command "mvn clean package"
 
 Running:
-* go into the folder code/\<name-of-system>/target/
-* run command "java -jar \<jar-file-name> \<path-to-documents-folder> \<number-of-expected-documents> \<path-to-queries-file> \<number-of-queries> [\<path-to-url-file>]"
+* go into the folder code/\<name-of-system\>/target/
+* run command "java -jar \<jar-file-name> \<path-to-documents-folder\> \<number-of-expected-documents\> \<path-to-queries-file\> \<number-of-queries\> \[\<path-to-url-file\>\]"
 
 ATTENTION:
 * \<path-to-documents-folder> must be a path to a folder containing the FRENCH documents in txt files
