@@ -41,7 +41,7 @@ The repository is organised as follows:
 * `homework-2`: this folder contains the final paper submitted to CLEF.
 * `slides`: this folder contains the slides used for presenting the conducted project.
 
-### How to run ###
+### How to run###
 To run the systems that have been submitted for the CLEF evaluation use the following instructions:
 Before running:
 In order to compile our systems you must install Maven (we used Maven version 3.9.0) and you must use Java JDK-17 (JDK-19 gives some problem with Lucene and you will get an exception while trying to run our jar files).
@@ -63,6 +63,7 @@ In order to compile our systems you must install Maven (we used Maven version 3.
 
 
 To run the systems that have not been submitted (also the submitted systems can be run this way):
+
 * import the folder code/`name-of-system`/ in you IDE (we used Intellij Idea IDE)
 * go into the class HelloFrench or HelloEnglish (depending on the system)
 * comment the indicated lines (if indicated)
