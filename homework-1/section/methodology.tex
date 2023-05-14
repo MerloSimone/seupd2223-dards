@@ -448,7 +448,40 @@ As an example, by looking at a batch of 10 discarded documents, we can see:
     \item Some queries such as the ones in the table above are directly specified in English. This makes English documents effectively relevant for them. This causes the removal to slightly worsen recall.
 \end{itemize}
 As already said, this strategy is ineffective on its own but may bring some improvement if paired with other techniques (see Section \ref{sec:conclusion}).
-
 \subsubsection{BaseSystem system}
 \label{subsub:BaseSystem}
 This system is actually the same as \ref{subsub:BM25TRANSLATEDQUERIES} but doesn't implement the query translation so, as a consequence, it uses the English queries provided by CLEF instead of the French queries. This system is used only as a benchmark for comparison with the system described in section \ref{subsub:BM25TRANSLATEDQUERIES}.
+
+\subsubsection{BM25DOCEXPANSION system}
+In this system we implemented the idea to expand the document vocabulary to avoid vocabulary mismatch between queries and documents. To do this we use two different analyzers, one for the documents (index time) and one for the queries (search time). This system is similar to BM25FRENCHBASE (Section \ref{subsub:BM25FRENCHBASE}), but we added SynonymGraphFilter, FlattenGraphFilter and RemoveDuplicatesFilter to the documents' analyzer. By doing this we can store the documents with their words and the synonyms too, lightening up the search time.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{l p{0.8\linewidth}}
+    Query language & French\\
+    Document language & French\\
+    Preprocessing & None\\
+    Similarity & BM25Similarity\\
+    Analyzer & Custom, composed as below\\
+    Tokenizer & StandardTokenizer\\
+    Filters & ElisionFilter, LowerCaseFilter, StopFilter, SynonymGraphFilter, FlattenGraphFilter, ASCIIFoldingFilter, FrenchLightStemFilter, RemoveDuplicatesTokenFilter\\
+    Searcher & Standard searcher
+    \end{tabular}
+\end{table}
+
+\subsubsection{BM25QUERYEXPANSION system}
+This system is similar to the previous one but instead of expanding the documents we expand the queries. It exploits the same idea of having two analyzers, one for the documents and one for the queries. This time we added SynonymGraphFilter to the queries' analyzer because sometimes users do not formulate queries using the best terms, therefore using synonyms can improve the quality of search results. This is less cost-effective than document expansion because it makes the search heavier.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{l p{0.8\linewidth}}
+    Query language & French\\
+    Document language & French\\
+    Preprocessing & None\\
+    Similarity & BM25Similarity\\
+    Analyzer & Custom, composed as below\\
+    Tokenizer & StandardTokenizer\\
+    Filters & ElisionFilter, LowerCaseFilter, StopFilter, SynonymGraphFilter, ASCIIFoldingFilter, FrenchLightStemFilter\\
+    Searcher & Standard searcher
+    \end{tabular}
+\end{table}
