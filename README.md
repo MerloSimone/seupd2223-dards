@@ -48,22 +48,22 @@ In order to compile our systems you must install Maven (we used Maven version 3.
 
 Compiling:
 * clone the bitbucket folder (git clone https://username@bitbucket.org/upd-dei-stud-prj/seupd2223-dards.git)
-* go into the folder code/<name-of-system>/ 
+* go into the folder code/\<name-of-system>/ 
 * run command "mvn clean package"
 
 Running:
-* go into the folder code/<name-of-system>/target/
-* run command "java -jar <jar-file-name> <path-to-documents-folder> <number-of-expected-documents> <path-to-queries-file> <number-of-queries> [<path-to-url-file>]"
+* go into the folder code/\<name-of-system>/target/
+* run command "java -jar \<jar-file-name> \<path-to-documents-folder> \<number-of-expected-documents> \<path-to-queries-file> \<number-of-queries> [\<path-to-url-file>]"
 
 ATTENTION:
-* <path-to-documents-folder> must be a path to a folder containing the FRENCH documents in txt files
-* <path-to-queries-file> must be a path to a file containing the FRENCH queries, ending with tsv extension (the extension must be specified)
-* <path-to-url-file> must be a path to a file ending with txt extension (the extension must be specified) (OPTIONAL: depending on the system)
+* \<path-to-documents-folder> must be a path to a folder containing the FRENCH documents in txt files
+* \<path-to-queries-file> must be a path to a file containing the FRENCH queries, ending with tsv extension (the extension must be specified)
+* \<path-to-url-file> must be a path to a file ending with txt extension (the extension must be specified) (OPTIONAL: depending on the system)
 * EXAMPLE: java -jar .\dards-1.00-jar-with-dependencies.jar D:\input\French\Documents\Trec 1570734 D:\input\French\Queries\train.tsv 672 D:\input\French\urls.txt
 
 
 To run the systems that have not been submitted (also the submitted systems can be run this way):
-* import the folder code/<name-of-system>/ in you IDE (we used Intellij Idea IDE)
+* import the folder code/\<name-of-system>/ in you IDE (we used Intellij Idea IDE)
 * go into the class HelloFrench or HelloEnglish (depending on the system)
 * comment the indicated lines (if indicated)
 * run the main of that class
