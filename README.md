@@ -47,6 +47,8 @@ The repository is organised as follows:
 To run the systems that have been submitted for the CLEF evaluation use the following instructions:
 Before running:
 In order to compile our systems you must install Maven (we used Maven version 3.9.0) and you must use Java JDK-17 (JDK-19 gives some problem with Lucene and you will get an exception while trying to run our jar files).
+
+
 * Compiling:
       * clone the bitbucket folder (git clone https://username@bitbucket.org/upd-dei-stud-prj/seupd2223-dards.git)
       * go into the folder code/`name-of-system`/ 
