@@ -73,7 +73,7 @@ public class TipsterParser extends it.unipd.dei.dards.parse.DocumentParser {
             boolean in_doc = false;
             while (true) {
                 line = ((BufferedReader) in).readLine();
-                //System.out.println(line);
+
                 lineno++;
 
                 if (line == null) {

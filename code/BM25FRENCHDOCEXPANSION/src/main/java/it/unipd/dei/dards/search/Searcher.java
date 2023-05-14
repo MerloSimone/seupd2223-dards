@@ -193,8 +193,6 @@ public class Searcher {
         try {
             BufferedReader in = Files.newBufferedReader(Paths.get(topicsFile), StandardCharsets.UTF_8);
 
-            //topics = new TrecTopicsReader().readQueries(in);
-            //topics = array QualityQuery[].
             TsvParserSettings settings = new TsvParserSettings();
             settings.getFormat().setLineSeparator("\n");
             TsvParser parser = new TsvParser(settings);
@@ -210,12 +208,8 @@ public class Searcher {
                 StringMap.put(TOPIC_FIELDS.TITLE, row[1]);
                 topics[i] = new QualityQuery(row[0], StringMap);
                 System.out.printf("%d/%d: %s | %s\n",i+1, expectedTopics, topics[i].getQueryID(), topics[i].getValue(TOPIC_FIELDS.TITLE));
-//                System.out.println("id: "+row[0]+" query: "+row[1]+" \n");
                 i++;
             }
-
-            //for(int j=0; j<topics.length; j++) System.out.println("!! "+topics[j].getQueryID()+" | "+topics[j].getValue(TOPIC_FIELDS.TITLE));
-            //for(QualityQuery t: topics) System.out.println("--"+t.getQueryID()+" | "+t.getValue(TOPIC_FIELDS.TITLE));
 
             in.close();
         } catch (IOException e) {
@@ -323,7 +317,6 @@ public class Searcher {
                 bq = new BooleanQuery.Builder();
 
                 bq.add(qp.parse(QueryParserBase.escape(t.getValue(TOPIC_FIELDS.TITLE))), BooleanClause.Occur.SHOULD);
-                //bq.add(qp.parse(QueryParserBase.escape(t.getValue(TOPIC_FIELDS.DESCRIPTION))), BooleanClause.Occur.SHOULD);
 
                 q = bq.build();
 
@@ -378,10 +371,8 @@ public class Searcher {
                 .addTokenFilter(StopFilterFactory.NAME, "words", "stopwords-fr.txt")
                 .addTokenFilter(ASCIIFoldingFilterFactory.class)
                 .addTokenFilter(FrenchLightStemFilterFactory.class)
-                //.addTokenFilter(RemoveDuplicatesTokenFilterFactory.class)
                 .build();
 
-        //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new DFRSimilarity(new BasicModelIne(), new AfterEffectL(), new NormalizationH2(0.9F))});
         final Similarity sim = new BM25Similarity();
 
         Searcher s = new Searcher(a, sim, indexPath, topics, 672, runID, runPath, maxDocsRetrieved);

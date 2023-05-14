@@ -285,8 +285,6 @@ public class DirectoryIndexer {
 
                         // add the document body
                         doc.add(new BodyField(pd.getBody()));
-                        //System.out.println(pd.getIdentifier());
-                        //System.out.println(pd.getBody());
 
                         writer.addDocument(doc);
 
@@ -347,7 +345,6 @@ public class DirectoryIndexer {
                 .addTokenFilter(RemoveDuplicatesTokenFilterFactory.class)
                 .build();
 
-        //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new DFRSimilarity(new BasicModelIne(), new AfterEffectL(), new NormalizationH2(0.9F))});
         final Similarity sim = new BM25Similarity();
 
         DirectoryIndexer i = new DirectoryIndexer(a, sim, ramBuffer, indexPath, docsPath, extension,
