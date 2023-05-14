@@ -1,6 +1,29 @@
 \section{Conclusions and Future Work}
 \label{sec:conclusion}
+%
+%Provide a summary of what are the main achievements and findings. 
+%
+%Discuss future work, e.g. what you may try next and/or how your approach could be further developed.
+%cenario finale raggiunto con annesse prestazioni.
+%Cosa manca da fare: cosa non si è potuto fare per mancanza di tempo e cosa non si è potuto fare per prestazioni insufficienti dei nostri sistemi (insostenibilità della durata dei processi).
 
-Provide a summary of what are the main achievements and findings. 
+We have been able to reach good results in terms of nDCG and in particular of recall, in particular with the system \textit{BM25FRENCHBOOSTURL}. We have developed a variety of system that use multiple different techniques to retrieve the documents always by paying attention to not create systems that are too overfitted to our training data (especially because the goal of the CLEF LongEval task was to evaluate the stability of the systems over time).
+\par
+The English translations of the original French documents and queries were done by machine translators and their quality was not particularly good. Our translation tool demonstrated that machine translation could have a not negligible impact on IR.
+\par
+For what concerns spam detection, after these experiments we can assert that the models we have experimented with are indeed too simple to adequately distinguish between spam and non-spam documents.
+For instance, a more complex algorithm that takes into account document length, word frequency distribution, word variance, sentence shape and language simultaneously may be able to target spam way more effectively. Moreover, with such an implementation, machine learning techniques may help in finding the optimal thresholds and weights for each document feature.
 
-Discuss future work, e.g. what you may try next and/or how your approach could be further developed.
+\subsection{Future work}
+\label{subsec:future}
+To improve our systems we will work on those aspects:
+\begin{itemize}
+    \item \textbf{Document translation}: try to improve the documents translations by improving our translation tool (and turning it in something that allow us to execute the translation of the documents BODY field in a computationally feasible time).
+    \item \textbf{System combination}: develop further the systems that use the English language, trying to increase the performances. After that combine the English and French systems results trying to do a multilingual search.
+    \item \textbf{Learn To Rank (LTR)}: try to implement some LTR (and feature extraction) technique considering more relevance feedback to avoid overfitting.
+    \item \textbf{Machine learning for spam detection}: look for correlation between various document features to infer with limited uncertainty whether a document contains spam.
+\end{itemize}
+
+
+%PARSING:
+%- Miglioramento del parsing per simboli strani come trattini, linee, stelle, ...
