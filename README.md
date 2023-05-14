@@ -56,7 +56,7 @@ In order to compile our systems you must install Maven (we used Maven version 3.
 
 * Running:
       * go into the folder code/`name-of-system`/target/
-      * run command "java -jar `jar-file-name` `path-to-documents-folder` `number-of-expected-documents` `path-to-queries-file` `number-of-queries` \[`path-to-url-file`\]"
+      * run command "java -jar `jar-with-dependencies-file-name` `path-to-documents-folder` `number-of-expected-documents` `path-to-queries-file` `number-of-queries` \[`path-to-url-file`\]"
 
 * ATTENTION:
       * `path-to-documents-folder` must be a path to a folder containing the FRENCH documents in txt files
