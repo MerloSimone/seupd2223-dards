@@ -15,23 +15,8 @@
  */
 
 /**
- * This package contains examples complementing the lectures of the <i>Search Engines</i> course.
+ * This package contains the parsing classes developed to parse LongEval documents.
  *
- * <p><i>Search Engines</i> is a course of the</p>
- * <ul>
- * <li><a href="https://degrees.dei.unipd.it/master-degrees/computer-engineering/"
- * target="_blank">Master Degree in Computer Engineering</a> of the  <a href="https://www.dei.unipd.it/en/"
- * target="_blank">Department of Information Engineering</a>;</li>
- * <li><a href="https://datascience.math.unipd.it/" target="_blank">Master Degree in Data Science</a> of the
- * <a href="https://www.math.unipd.it/en/" target="_blank">Department of Mathematics &quot;Tullio Levi-Civita&quot;</a>;</li>
- * </ul>
- * <p>both at <a href="https://www.unipd.it/en/" target="_blank">University of Padua</a>, Italy.</p>
- *
- * <p>
- * <i>Search Engines</i> is part of the teaching activities
- * of the <a href="http://iiia.dei.unipd.it/" target="_blank">Intelligent Interactive Information Access (IIIA)
- * Hub</a>.
- * </p>
  *
  * <p>Copyright and license information can be found in the file LICENSE.  Additional information can be found in the
  * file NOTICE.</p>

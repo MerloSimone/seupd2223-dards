@@ -18,13 +18,12 @@ package it.unipd.dei.dards.index;
 
 import it.unipd.dei.dards.parse.DocumentParser;
 import it.unipd.dei.dards.parse.ParsedDocument;
-import it.unipd.dei.dards.parse.TipsterParser;
+import it.unipd.dei.dards.parse.LongEvalParser;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.en.KStemFilterFactory;
-import org.apache.lucene.analysis.en.PorterStemFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -337,7 +336,7 @@ public class DirectoryIndexer {
         final Similarity sim = new BM25Similarity();
 
         DirectoryIndexer i = new DirectoryIndexer(a, sim, ramBuffer, indexPath, docsPath, extension,
-                                                  charsetName, expectedDocs, TipsterParser.class);
+                                                  charsetName, expectedDocs, LongEvalParser.class);
 
         i.index();
 

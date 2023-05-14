@@ -20,7 +20,7 @@
  * <p>Copyright and license information can be found in the file LICENSE.  Additional information can be found in the
  * file NOTICE.</p>
  *
- * @author Nicola Ferro (ferro@dei.unipd.it)
+ * @author DARDS
  * @version 1.00
  * @since 1.00
  */
