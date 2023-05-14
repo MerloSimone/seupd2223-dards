@@ -8,9 +8,9 @@ Authors of this repository are the students part of the DARDS group:
 
 *	Angela Pomaro
 *	Daniel Carlesso
+*   Diego Spinosa
 *	Riccardo Gobbo
 *	Simone Merlo
-*	Diego Spinosa
 
 *Search Engines* is a course of the
 
@@ -23,8 +23,8 @@ Authors of this repository are the students part of the DARDS group:
 
 The repository is organised as follows:
 
-* `code`: this folder contains the source code of the developed system.
-* `runs`: this folder contains the runs produced by the developed system.
+* `code`: this folder contains the source code of the developed system (each subfolder contains the source code of a system and is named accordingly to that system).
+* `runs`: this folder contains the runs produced by the developed system (each zip folder contains the runs for the system that corresponds to the folder name, the subfolder not-submitted-runs contains some additional runs that were used for training purposes but MUST NOT be considered for the evaluation done by CLEF).
 * `results`: this folder contains the performance scores of the runs.
 * `homework-1`: this folder contains the report describing the techniques applied and insights gained.
 * `homework-2`: this folder contains the final paper submitted to CLEF.
