@@ -87,7 +87,7 @@ def check_doc(doc: str, th: float) -> bool:
 """
     Main function used to parse all the files in the input folder
 """
-def analyze_docs(dir, th):
+def analyze_docs(dir, th, qrels_file):
     print(f"[-] Analyzing the documents with threshold {th}..")
     path = os.path.join(f"docs_parsed_{th}")
     file_res = open(f"res-{th}-less4.txt", "w", encoding='utf-8')
@@ -150,42 +150,34 @@ def analyze_docs(dir, th):
         
         tot_doc += doc_num  # Update number of documents read
         
-
-    # Print discarded docs
-    # [file_name, word, word_count, words_count, ratio]
-    """ file_res.write("[+] The discarded docs are the following:\nFILE\tDOC\tWORD\n")
-    
-    for doc in discarded_docs.keys():
-        try:
-            file_name , word, word_count, words_count = discarded_docs.get(doc) 
-            file_res.write(f"{file_name}\t{doc}\t{word}\t{word_count}/{words_count}\t{str(word_count/words_count).replace('.', ',')}\n")
-        except Exception as e:
-            print(f"[!] An error occurred with doc {doc}. Error: {e}")
-            pass """
     """
         Decomment if the qrels are not available
     """
     
-    # Check which documents have erroneously been discarded
-    file_qrels = open("input\\French\\Qrels\\train.txt", "r", encoding="utf-8")
-    doc_pattern = "doc\d+ \d+"
-
-    # q06223196 0 doc062200112743 0
-    file_res.write("\n\n[+] Comparison with qrels:\n")
-    for true_res in file_qrels.readlines():
+    if qrels_file is not None:
         try:
-            if len(res := findall(doc_pattern, true_res)) > 0:
-                doc = str(res[0]).split()[0]                    # doc062200112743
-                rel_num = int(str(res[0]).split()[1])           # 0 (not relevant), 1 (slightly relevant), 2 (highly relevant)
+            # Check which documents have erroneously been discarded
+            file_qrels = open(qrels_file, "r", encoding="utf-8")
+            doc_pattern = "doc\d+ \d+"
 
-                # Detect if a document is relevant but it has been discarded
-                if rel_num > 0 and discarded_docs.get(doc) != None:
-                    file_name , word, word_count, words_count = discarded_docs.get(doc) 
-                    file_res.write(f"{file_name}\t{doc}\t{word}\t{word_count}/{words_count}\t{str(word_count/words_count).replace('.', ',')}\n")
+            # q06223196 0 doc062200112743 0
+            file_res.write("\n\n[+] Comparison with qrels:\n")
+            for true_res in file_qrels.readlines():
+                try:
+                    if len(res := findall(doc_pattern, true_res)) > 0:
+                        doc = str(res[0]).split()[0]                    # doc062200112743
+                        rel_num = int(str(res[0]).split()[1])           # 0 (not relevant), 1 (slightly relevant), 2 (highly relevant)
+
+                        # Detect if a document is relevant but it has been discarded
+                        if rel_num > 0 and discarded_docs.get(doc) != None:
+                            file_name , word, word_count, words_count = discarded_docs.get(doc) 
+                            file_res.write(f"{file_name}\t{doc}\t{word}\t{word_count}/{words_count}\t{str(word_count/words_count).replace('.', ',')}\n")
+                except Exception as e:
+                    print(f"[!] Error reading line {true_res}. Error: {e}")
+
+            file_qrels.close()
         except Exception as e:
-            print(f"[!] Error reading line {true_res}. Error: {e}")
-
-    file_qrels.close()
+            print(f"Some error occurred during the comparison with qrels: {e}")
    
     file_res.write(f"[+] {len(document_list)} files analyzed, {tot_doc} documents analyzed, {doc_kept}={round(doc_kept/tot_doc,4)} documents kept, {tot_doc-doc_kept}={round((tot_doc-doc_kept)/tot_doc,4)} document removed\n")       
     file_res.close()
@@ -215,16 +207,54 @@ def add_useless_words(files):
 if __name__ == "__main__":
     try:
         # Files containing all words to ignore while parsing the documents
-        files = ["stopwords-fr-002.txt",
-                 "french-articles.txt"]
+        files = []
+        docs_folder = ""
+        id = ""
+        qrels_file = None
+
+        if len(argv) < 3:
+            print(f"""Usage:
+             {argv[0]} -d <Folder containing all documents> [OPTIONS IN ORDER]
+             OPTIONS: 
+                -q <Qrels> file with ground truth
+                -i <id> to identify the results
+                -f <file1> ... <file n> for stopwords/articles""")
+            # print(f"Usage:\n {argv[0]} -d <Folder containing all documents>\n Op{argv[0]} -d <Folder containing all documents> (optional) ")
+            exit()
+
+        try:
+            doc_folder = argv[argv.index('-d')+1]
+        except:
+            print(f"You must specify the folder containing the files with documents")
+            exit()
+
+        try:
+            for i in range(argv.index('-f')+1, len(argv)): files.append(argv[i])
+        except Exception as e:
+            pass
+
+        try:
+            id = argv[argv.index('-i')+1]
+        except:
+            pass
+        
+        try:
+            qrels_file = argv[argv.index('-q')+1]
+        except:
+            pass
+        
+        
+        # files = ["stopwords-fr-002.txt",
+                #  "french-articles.txt"]
         
         # Adding words to ignore
-        add_useless_words(files)
+        if len(files) > 0: add_useless_words(files)
 
         # Parsing docs
-        freqs = [0.15]
-        for f in freqs:
-            analyze_docs(doc_path, f)
+        # paths = ["A-Short-July\\French\\Documents\\Trec\\", "B-Long-September\\French\\Documents\\Trec\\"]
+        # ids = ['A', 'B']
+        # for p, id in zip(paths, ids):
+        analyze_docs(doc_folder, id, qrels_file)
         
         print("[+] Parsing done!")
     except Exception as e:

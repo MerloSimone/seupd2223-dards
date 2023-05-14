@@ -4,6 +4,7 @@ from shutil import rmtree
 from re import findall, search
 from string import punctuation
 from traceback import print_exception
+from sys import argv
 
 """
     Dictionaries used to ignore words and check erroneously discarded documents
@@ -175,12 +176,15 @@ def add_useless_words(files):
     
     # Analyze each file in the list
     for file in files:
-        f = open(file, "r", encoding="utf-8")
-        strings = f.readlines()
-        for string in strings:
-            for word in string.split():
-                no_words[word.strip()] = 0  # For every word create a new entry into the dictionary with a useless value
-    f.close()
+        try:
+            f = open(file, "r", encoding="utf-8")
+            strings = f.readlines()
+            for string in strings:
+                for word in string.split():
+                    no_words[word.strip()] = 0  # For every word create a new entry into the dictionary with a useless value
+            f.close()
+        except Exception:
+            print(f"[!] Unable to read file: {file}")
     for c in punctuation: no_words[c] = 0   # Adding also punctuation
     print(f"[+] Done. {len(no_words)} words to ignore retrieved")
 
@@ -191,17 +195,47 @@ def add_useless_words(files):
 if __name__ == "__main__":
     try:
         # Files containing all words to ignore while parsing the documents
-        files = ["stopwords-fr-002.txt",
-                 "french-articles.txt"]
+        files = []
+        docs_folder = ""
+        id = ""
+
+        if len(argv) < 3:
+            print(f"""Usage:
+             {argv[0]} -d <Folder containing all documents> [OPTIONS IN ORDER]
+             OPTIONS: 
+                -i <id> to identify the results
+                -f <file1> ... <file n> for stopwords/articles""")
+            # print(f"Usage:\n {argv[0]} -d <Folder containing all documents>\n Op{argv[0]} -d <Folder containing all documents> (optional) ")
+            exit()
+
+        try:
+            doc_folder = argv[argv.index('-d')+1]
+        except:
+            print(f"You must specify the folder containing the files with documents")
+            exit()
+
+        try:
+            for i in range(argv.index('-f')+1, len(argv)): files.append(argv[i])
+        except Exception as e:
+            pass
+
+        try:
+            id = argv[argv.index('-i')+1]
+        except:
+            pass
+        
+        
+        # files = ["stopwords-fr-002.txt",
+                #  "french-articles.txt"]
         
         # Adding words to ignore
-        add_useless_words(files)
+        if len(files) > 0: add_useless_words(files)
 
         # Parsing docs
-        paths = ["A-Short-July\\French\\Documents\\Trec\\", "B-Long-September\\French\\Documents\\Trec\\"]
-        ids = ['A', 'B']
-        for p, id in zip(paths, ids):
-            analyze_docs(p, id)
+        # paths = ["A-Short-July\\French\\Documents\\Trec\\", "B-Long-September\\French\\Documents\\Trec\\"]
+        # ids = ['A', 'B']
+        # for p, id in zip(paths, ids):
+        analyze_docs(doc_folder, id)
         
         print("[+] Parsing done!")
     except Exception as e:
