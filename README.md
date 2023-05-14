@@ -26,13 +26,15 @@ The repository is organised as follows:
 * `code`: this folder contains the source code of the developed systems (each subfolder is named as the corresponding system and contains the source code of that system):
       * `BaseSystem`: Base English system
       * `BM25FRENCHBASE`: Base French system
+      * `BM25FRENCHSPAM`: Base French system with spam preprocessing
       * `BM25FRENCHBOOSTURL`: French system with query boosting and document URL indexing.
       * `BM25FRENCHNOENG`: French system with an English document filter.
       * `BM25FRENCHRERANK100`: French system using reranking and query boosting.
       * `BM25TRANSLATEDQUERIES`: English system using translated French queries.
 * `runs`: this folder contains the runs produced by the developed systems (each zip folder contains the runs WithinTime, ShortTerm,LonTerm for the system corresponding to the folder name, the subfolder not-submitted-runs contains some runs that were used for training purposes but MUST NOT be considered by CLEF):
       * `DARDS_BM25FRENCHBASE.zip`: BM25FRENCHBASE system runs.
-      * `DARDS_BM25FRENCHBOOSTURL.zip`:BM25FRENCHBOOSTURL system runs .
+      * `DARDS_BM25FRENCHSPAM.zip`: BM25FRENCHSPAM system runs .
+      * `DARDS_BM25FRENCHBOOSTURL.zip`:BM25FRENCHBOOSTURL system runs.
       * `DARDS_BM25FRENCHRERANK100.zip`: BM25FRENCHRERANK100 system runs.
       * `DARDS_BM25TRANSLATEDQUERIES.zip`: BM25TRANSLATEDQUERIES system runs.
       * `not-submitted-runs`: additional training runs (MUST NOT be considerered by CLEF).
@@ -45,7 +47,6 @@ The repository is organised as follows:
 To run the systems that have been submitted for the CLEF evaluation use the following instructions:
 Before running:
 In order to compile our systems you must install Maven (we used Maven version 3.9.0) and you must use Java JDK-17 (JDK-19 gives some problem with Lucene and you will get an exception while trying to run our jar files).
-
 * Compiling:
       * clone the bitbucket folder (git clone https://username@bitbucket.org/upd-dei-stud-prj/seupd2223-dards.git)
       * go into the folder code/`name-of-system`/ 
@@ -61,6 +62,7 @@ In order to compile our systems you must install Maven (we used Maven version 3.
       * `path-to-url-file` must be a path to a file ending with txt extension (the extension must be specified) (OPTIONAL: depending on the system)
       * EXAMPLE: java -jar .\dards-1.00-jar-with-dependencies.jar D:\input\French\Documents\Trec 1570734 D:\input\French\Queries\train.tsv 672 D:\input\French\urls.txt
 
+Note: `BM25FRENCHSPAM` system needs a preprocessing stage by executing the [`docs_filter.py`](code/BM25FRENCHSPAM/docs_filter.py) Python program <b>before</b> the system analysis.
 
 To run the systems that have not been submitted (also the submitted systems can be run this way):
 
