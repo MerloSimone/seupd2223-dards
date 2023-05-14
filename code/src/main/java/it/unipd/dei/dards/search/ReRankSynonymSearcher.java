@@ -17,16 +17,22 @@
 package it.unipd.dei.dards.search;
 
 //import it.unipd.dei.dards.analysis.MyFrenchAnalyzer;
+import it.unipd.dei.dards.index.DirectoryIndexer;
 import it.unipd.dei.dards.index.ReRankDirectoryIndexer;
 import it.unipd.dei.dards.parse.ParsedDocument;
+import it.unipd.dei.dards.parse.TipsterParser;
 import opennlp.tools.util.model.DictionarySerializer;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.FlattenGraphFilterFactory;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.en.KStemFilterFactory;
 import org.apache.lucene.analysis.fr.FrenchLightStemFilterFactory;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
+import org.apache.lucene.analysis.miscellaneous.RemoveDuplicatesTokenFilterFactory;
+import org.apache.lucene.analysis.opennlp.OpenNLPLemmatizerFilterFactory;
+import org.apache.lucene.analysis.opennlp.OpenNLPPOSFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.analysis.synonym.SynonymGraphFilterFactory;
 import org.apache.lucene.analysis.util.ElisionFilterFactory;
@@ -339,13 +345,13 @@ public class ReRankSynonymSearcher {
      * @param runID            the identifier of the run to be created.
      * @param runPath          the path where to store the run.
      * @param maxDocsRetrieved the maximum number of documents to be retrieved.
-     * @param rerank            tells if rerank is wanted.
+     * @param rerank            tells if rerank is wanted. (more important than {@param maxIterations}
      * @param sim               the similarity for the reranking
      * @param a_docs                 the analyzer for the reranking
      * @param ramBuffer         the size of the ramBuffer for the rerank
      * @param reindexPath       the path for the index used in the reranking
      * @param a_querySecond     second query analyzer
-     * @param maxIterations     max number of reranking iterations, 2 mininmum for reranking, if 1 no reranking
+     * @param maxIterations     max number of reranking iterations, 2 mininmum for reranking, if 1 no reranking and {@param rerank} must be false.
      * @throws NullPointerException     if any of the parameters is {@code null}.
      * @throws IllegalArgumentException if any of the parameters assumes invalid values.
      */
@@ -492,9 +498,15 @@ public class ReRankSynonymSearcher {
                     "The maximum number of documents to be retrieved cannot be less than or equal to zero.");
         }
 
+        if(maxIterations <= 0)
+            throw new IllegalArgumentException("MaxIterations must be greater than 0");
+
         this.maxDocsRetrieved = maxDocsRetrieved;
 
         this.rerank=rerank;
+
+        if(maxIterations == 1 && rerank)
+            throw new IllegalArgumentException("Cannot have rerank=true and maxIterations=1");
 
         if(rerank){
             if(sim==null || a_docs==null || ramBuffer<256 || reindexPath==null || a_querySecond==null) throw new IllegalArgumentException("inconsistent parameter passed");
@@ -754,8 +766,11 @@ public class ReRankSynonymSearcher {
                 .addTokenFilter(ElisionFilterFactory.NAME, "articles", "french-articles.txt")
                 .addTokenFilter(LowerCaseFilterFactory.class)
                 .addTokenFilter(StopFilterFactory.NAME, "words", "stopwords-fr.txt")
+                //.addTokenFilter(SynonymGraphFilterFactory.NAME, "synonyms", "synonyms.txt")
+                //.addTokenFilter(FlattenGraphFilterFactory.class)
                 .addTokenFilter(ASCIIFoldingFilterFactory.class)
                 .addTokenFilter(FrenchLightStemFilterFactory.class)
+                .addTokenFilter(RemoveDuplicatesTokenFilterFactory.class)
                 .build();
 
         final Analyzer a_query = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class)
@@ -763,8 +778,8 @@ public class ReRankSynonymSearcher {
                 .addTokenFilter(LowerCaseFilterFactory.class)
                 .addTokenFilter(StopFilterFactory.NAME, "words", "stopwords-fr.txt")
                 .addTokenFilter(ASCIIFoldingFilterFactory.class)
-                //.addTokenFilter(SynonymGraphFilterFactory.NAME, "synonyms", "synonyms.txt")
                 .addTokenFilter(FrenchLightStemFilterFactory.class)
+                //.addTokenFilter(RemoveDuplicatesTokenFilterFactory.class)
                 .build();
 
         final Analyzer a_synonyms = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class)
@@ -774,6 +789,7 @@ public class ReRankSynonymSearcher {
                 .addTokenFilter(SynonymGraphFilterFactory.NAME, "synonyms", "synonyms.txt")
                 .addTokenFilter(ASCIIFoldingFilterFactory.class)
                 .addTokenFilter(FrenchLightStemFilterFactory.class)
+                //.addTokenFilter(RemoveDuplicatesTokenFilterFactory.class)
                 .build();
 
         //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new DFRSimilarity(new BasicModelIne(), new AfterEffectL(), new NormalizationH2(0.9F))});
@@ -782,10 +798,8 @@ public class ReRankSynonymSearcher {
         //Searcher s = new Searcher(a, sim, indexPath, topics, 672, runID, runPath, maxDocsRetrieved,true,sim,a,256,reindexPath);
 
         final ReRankSynonymSearcher s = new ReRankSynonymSearcher(a_query, sim, indexPath, topics, 672, runID,
-                runPath, maxDocsRetrieved, true, sim, a_docs, 256, reIndexPath, a_synonyms, 3);
+                runPath, maxDocsRetrieved, false, sim, a_docs, 256, reIndexPath, a_synonyms, 1);
         s.search();
-
-
     }
 
 }

@@ -23,7 +23,10 @@ import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.en.KStemFilterFactory;
 import org.apache.lucene.analysis.en.PorterStemFilterFactory;
+import org.apache.lucene.analysis.fr.FrenchLightStemFilterFactory;
+import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.apache.lucene.analysis.util.ElisionFilterFactory;
 import org.apache.lucene.benchmark.quality.QualityQuery;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -359,7 +362,7 @@ public class Searcher {
      */
     public static void main(String[] args) throws Exception {
 
-        final String topics = "./input/English/Queries/train.tsv";
+        final String topics = "./input/French/Queries/train.tsv";
 
         final String indexPath = "experiment/index-stop-stem";
 
@@ -369,8 +372,14 @@ public class Searcher {
 
         final int maxDocsRetrieved = 1000;
 
-        final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
-                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).addTokenFilter(KStemFilterFactory.class).build();
+        final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class)
+                .addTokenFilter(ElisionFilterFactory.NAME, "articles", "french-articles.txt")
+                .addTokenFilter(LowerCaseFilterFactory.class)
+                .addTokenFilter(StopFilterFactory.NAME, "words", "stopwords-fr.txt")
+                .addTokenFilter(ASCIIFoldingFilterFactory.class)
+                .addTokenFilter(FrenchLightStemFilterFactory.class)
+                //.addTokenFilter(RemoveDuplicatesTokenFilterFactory.class)
+                .build();
 
         //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new DFRSimilarity(new BasicModelIne(), new AfterEffectL(), new NormalizationH2(0.9F))});
         final Similarity sim = new BM25Similarity();

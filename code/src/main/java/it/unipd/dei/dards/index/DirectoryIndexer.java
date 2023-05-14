@@ -20,12 +20,18 @@ import it.unipd.dei.dards.parse.DocumentParser;
 import it.unipd.dei.dards.parse.ParsedDocument;
 import it.unipd.dei.dards.parse.TipsterParser;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.FlattenGraphFilterFactory;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.en.KStemFilterFactory;
 import org.apache.lucene.analysis.en.PorterStemFilterFactory;
+import org.apache.lucene.analysis.fr.FrenchLightStemFilterFactory;
+import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
+import org.apache.lucene.analysis.miscellaneous.RemoveDuplicatesTokenFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.apache.lucene.analysis.synonym.SynonymGraphFilterFactory;
+import org.apache.lucene.analysis.util.ElisionFilterFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -323,15 +329,23 @@ public class DirectoryIndexer {
     public static void main(String[] args) throws Exception {
 
         final int ramBuffer = 256;
-        final String docsPath = "./input/English/Documents/Trec";
+        final String docsPath = "./input/French/Documents/Trec";
         final String indexPath = "experiment/index-stop-stem";
 
         final String extension = "txt";
         final int expectedDocs = 1570734;
         final String charsetName = StandardCharsets.UTF_8.name();
 
-        final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class).addTokenFilter(
-                LowerCaseFilterFactory.class).addTokenFilter(StopFilterFactory.class).addTokenFilter(KStemFilterFactory.class).build();
+        final Analyzer a = CustomAnalyzer.builder().withTokenizer(StandardTokenizerFactory.class)
+                .addTokenFilter(ElisionFilterFactory.NAME, "articles", "french-articles.txt")
+                .addTokenFilter(LowerCaseFilterFactory.class)
+                .addTokenFilter(StopFilterFactory.NAME, "words", "stopwords-fr.txt")
+                .addTokenFilter(SynonymGraphFilterFactory.NAME, "synonyms", "synonyms.txt")
+                .addTokenFilter(FlattenGraphFilterFactory.class)
+                .addTokenFilter(ASCIIFoldingFilterFactory.class)
+                .addTokenFilter(FrenchLightStemFilterFactory.class)
+                .addTokenFilter(RemoveDuplicatesTokenFilterFactory.class)
+                .build();
 
         //final Similarity sim = new MultiSimilarity(new Similarity[]{new BM25Similarity(), new DFRSimilarity(new BasicModelIne(), new AfterEffectL(), new NormalizationH2(0.9F))});
         final Similarity sim = new BM25Similarity();
