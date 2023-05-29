@@ -1,11 +1,70 @@
 \section{Experimental Setup}
 \label{sec:setup}
 
-Describe the experimental setup, i.e.
+%Describe the experimental setup, i.e.
+%\begin{itemize}
+%	\item used collections
+%	\item evaluation measures
+%	\item url to git repository and its organization
+%	\item hardware used for experiments
+%	\item ...
+%\end{itemize}
+
+%Overall, our experimental setup was composed by:
+%\begin{itemize}
+%	\item Used collections: citazione alle collection training di CLEF LongEval, scelta della lingua: (in generale) quando abbiamo usato quale lingua/e.
+%	\item evaluation measures: quali metriche abbiamo scelto per dirigere il nostro lavoro (MAP, recall?...)
+%	\item url to git repository and its organization: URL, posizionamento degli elementi e dei diversi sistemi.
+%	\item hardware used for experiments: le nostre configurazioni (che sia veramente importante specificarle tutte o indicare sommariamente hardware commerciale-debole?)
+%	\item Riferimento agli script/strumenti utilizzati? (in breve)
+%    \item ... c'è altro da aggiungere?
+%\end{itemize}
+
+Overall, our experimental setup was composed by:
 \begin{itemize}
-	\item used collections
-	\item evaluation measures
-	\item url to git repository and its organization
-	\item hardware used for experiments
-	\item ...
+	\item \textbf{Used collections}: In our experiments we both used the French and English corpora provided by the CLEF LongEval organizers, which include 1570734 documents and 672 queries for each language. However, the French collection was favoured because of the translation errors the English corpus contains (see section~\ref{sec:results} for a closer look).  
+ 
+	\item \textbf{Evaluation measures}: The general metric we used for evaluating the various systems was the nDCG. However, more specific recall and precision metrics had also to be taken into account to guide the improvement efforts. The tool used to evaluate the performances once the run files were created was Trec\_Eval (version 9.0.7). The ground-truth considered for the evaluation was the one provided directly by CLEF organizer along with the collection.
+
+ 
+	\item \textbf{Url to git repository}: \href{https://bitbucket.org/upd-dei-stud-prj/seupd2223-dards/src/master/}{https://bitbucket.org/upd-dei-stud-prj/seupd2223-dards/src/master/}
+
+
+
+ 
+        \item \textbf{Organization of git repository}: The organization of the git repository is accurately given in the README.md file. However, the main directories are:
+            \begin{itemize}
+                \item code: which contains some sub-directories each corresponding to one of the systems and some additional run files.
+                \item runs: which contains the runs submitted to CLEF for the evaluation (properly organized in zipped directories having a name that corresponds to the related system).
+            \end{itemize}
+
+
+            
+	\item \textbf{Hardware used for experiments}: All the indexing, searching and eventual pre-processing work has mostly been carried out on different commercial, mid-end machines. Overall, extensive testing (especially employing advanced NLP and POS-tagging techniques) has been limited by the low computing power at our disposal that made certain processes unsustainably long to complete. We report some of the used hardware:
+     \begin{itemize}
+         \item Machine 1:
+            \begin{itemize}
+                \item CPU: Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz
+                \item RAM: 16,0 GB (DDR4)
+                \item GPU: NVIDIA GeForce GTX 1050
+                \item HDD: Seagate Mobile HDD ST1000LM035
+            \end{itemize}
+        \item Machine 2:
+            \begin{itemize}
+                \item CPU: Intel(R) Core(TM) i5-2400S CPU
+                \item RAM: 8,0 GB (DDR3)
+                \item GPU: NVIDIA GeForce GTX 750Ti
+                \item HDD: 500GB 7200rpm hard drive
+            \end{itemize}
+        \item Machine 3:
+            \begin{itemize}
+                \item CPU: AMD A8-7410 APU
+                \item RAM: 8,0 GB (DDR3)
+                \item GPU: Radeon R5 Graphics
+                \item SSD: Baititon 480GB SSD 
+            \end{itemize}
+            
+     \end{itemize}
+     
+	\item \textbf{Scripts and tools employed}: A tool was developed to help in the error analysis process. \emph{tellme} is a small C program that automatically analyzes the run file, comparing it with the qrels and producing a list of all the retrieval errors. Thresholds for both precision and recall errors can be set in order to show only the most prominent errors while a verbose mode will also print to screen the content of the related query and document, aiding error inspection. You can find the tool's \href{https://bitbucket.org/upd-dei-stud-prj/seupd2223-dards/src/master/tellmev3.c}{C source here}.
 \end{itemize}
