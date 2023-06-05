@@ -126,7 +126,7 @@ We tried two different tokenizers:
     \item \textbf{StandardTokenizer}: a grammar-based tokenizer constructed with JFlex. It implements the Word Break rules from the Unicode Text Segmentation algorithm, as specified in Unicode Standard Annex \#29.
     \item \textbf{WhiteSpaceTokenizer}: it breaks text into terms whenever it encounters a whitespace character.
 \end{itemize}
-We started out using StandardTokenizer and we noticed that expressions separated with hyphens were divided into different tokens. To avoid this, we tried a combination of WhiteSpaceTokenizer and PatternReplaceFilter to remove all punctuations/symbols except for hyphens. But then performances decreased and we backtracked.
+We started out using StandardTokenizer and we noticed that expressions separated with hyphens were divided into different tokens. To avoid this, we tried a combination of WhiteSpaceTokenizer and PatternReplaceFilter to remove all punctuations/symbols except for hyphens. But then performance decreased and we backtracked.
 \\
 In addition to the StandardTokenizer we used different filters, some of them shared by both English-based and French-based systems:
 \\
@@ -136,12 +136,12 @@ In addition to the StandardTokenizer we used different filters, some of them sha
     \item \textbf{ASCIIFoldingFilter}: it converts alphabetic, numeric, and symbolic Unicode characters which are not in the Basic Latin Unicode block (the first 127 ASCII characters) to their ASCII equivalents, if one exists. This filter was used to solve accents and diacritical marks problem with French.
     \item \textbf{FrenchLightStemFilter}: this stemmer implements the "UniNE" algorithm~\cite{frenchlightstemmer}.
 \end{itemize}
-Note that for the French case other stemmers (FrenchMinimalStemmer, org.taurus.snowball's FrenchStemmer) and chain of stemmers (multiple stemmers in a single analyzer) have been tested and evaluated but the performances of the FrenchLigthStemmer turned out to be the best.
+Note that for the French case other stemmers (FrenchMinimalStemmer, org.taurus.snowball's FrenchStemmer) and chain of stemmers (multiple stemmers in a single analyzer) have been tested and evaluated but the performance of the FrenchLigthStemmer turned out to be the best.
 \\
 \textbf{English}
 \begin{itemize}
     \item \textbf{NGramFilter}: it generates character n-gram tokens of sizes in the given range. Tokens are ordered by position and then by gram size.
-    \item \textbf{ShingleFilter}: it constructs word n-grams, which are token n-grams, from the token stream. it combines runs of tokens into a single token.
+    \item \textbf{ShingleFilter}: it constructs word n-grams, which are token n-grams, from the token stream.
     \item \textbf{PorterStemFilter}: it applies the Porter Stemming Algorithm for English. The results are similar to using the Snowball Porter Stemmer with the language="English" argument. It is coded directly in Java and it is four times faster than the English Snowball stemmer.
     \item \textbf{KStemFilter}: it is an alternative to the Porter Stem Filter for developers looking for a less aggressive stemmer. KStem was written by Bob Krovetz, ported to Lucene by Sergio Guzman-Lara (UMASS Amherst). This stemmer is only appropriate for English language text.
 \end{itemize}
@@ -200,7 +200,7 @@ In the large majority of cases the BM25Similarity turned out to be the best opti
  AxiomaticF2EXP & 0.1346\\
  \hline
 \end{tabular}
-\caption{Comparison of rerank performances.}
+\caption{Comparison of rerank performance.}
 \label{tab:similcomp}
 \end{table}
 \end{center}
@@ -336,7 +336,7 @@ By doing several experiments we noticed that with English the best performing st
 \par
 The StopFilter does not use a customized stoplist but it uses the standard English stoplist provided by the Lucene class EnglishAnalyzer through the static variable ENGLISH\_STOP\_WORDS\_SET.
 \par
-Furthermore, to increase the performances, we tried to translate also the documents by using our tool (see Section~\ref{subsec:transltools}) but, since the tool is used as a REST resource and because of the number and length of the documents, this approach resulted to be too demanding in terms of computational time, so we abandoned this idea.
+Furthermore, to increase the performance, we tried to translate also the documents by using our tool (see Section~\ref{subsec:transltools}) but, since the tool is used as a REST resource and because of the number and length of the documents, this approach resulted to be too demanding in terms of computational time, so we abandoned this idea.
 
 \subsubsection{BM25FRENCHRERANK100 system}
 \label{subsub:BM25FRENCHRERANK100}
@@ -360,7 +360,7 @@ In order to achieve a better performance, query boosting (see Section~\ref{subsu
 \par
 The rerank is performed as described in Section~\ref{subsub:rerank} and, in this case, the query that is used to repeat the search is the same used for the main search. The query created is a BooleanQuery obtained by connecting the BoostedQuery(ies) (each representing a boosted token of the topic ) by means of an OR clause.
 \par
-Note that this system performs the rerank only for the first (most relevant) 100 document retrieved by the first search (for the CLEF LongEval task the maximum number of retrieved documents is 1000). We have chosen to rerank only 100 documents because by looking at the performances through the Trec\_Eval tool we noticed that the recall at the document cut-off 100 was sufficiently high. Nonetheless, we also tried to perform the rerank considering all the retrieved document but the performance resulted to be lower. 
+Note that this system performs the rerank only for the first (most relevant) 100 document retrieved by the first search (for the CLEF LongEval task the maximum number of retrieved documents is 1000). We have chosen to rerank only 100 documents because by looking at the performance through the Trec\_Eval tool we noticed that the recall at the document cut-off 100 was sufficiently high. Nonetheless, we also tried to perform the rerank considering all the retrieved document but the performance resulted to be lower. 
 \par
 Finally, we tried to boost the query performed in the second search in a different way (by recomputing the TF-IDF-like weights considering only the secondary index created in during the reranking step) but the performance decreased (see Table~\ref{tab:rerankperf}).
 
@@ -371,13 +371,13 @@ Finally, we tried to boost the query performed in the second search in a differe
  \hline
    & rerank100 & rerank1000  \\
  \hline\hline
- map & 0.1960 & 0.1702 \\ 
- ndcg & 0.3657 & 0.3379  \\
+ MAP & 0.1960 & 0.1702 \\ 
+ nDCG & 0.3657 & 0.3379  \\
  recall & 0.8437 & 0.8437 \\
  p@5 & 0.1533 & 0.1336 \\ 
  \hline
 \end{tabular}
-\caption{Comparison of rerank performances.}
+\caption{Comparison of rerank performance.}
 \label{tab:rerankperf}
 \end{table}
 \end{center}
@@ -390,13 +390,13 @@ The ASCIIFoldingFilter was used to avoid problems related to French diacritical 
 \label{subsub:BM25FRENCHSPAM}
 The system BM25FRENCHSPAM implements entirely the BM25FRENCHBASE (\ref{subsub:BM25FRENCHBASE}) applying documents preprocessing. All documents used as input are first parsed by a "spam" parser implemented in Python, as described in Section~\ref{subsubsec:spam}, and executed before the BM25FRENCHSPAM analyses. Since the pre-process activity uses a threshold above which a document is excluded, it was necessary to understand the average value (\(\frac{\text{Max freq}}{\text{Number different words}}\)) of the collection, assuming that most of the documents were valid (i.e. contain meaningful sentences). Using a slightly modified version (not reported) of the already existing parser (Figure~\ref{fig:doc_parser-figure}) it turned out that the average ratio of the test collection corresponded to 6.5\%. 
 \par
-In order to assign as correct a value as possible, some test has been done using different thresholds and checking the corresponding performances.  More specifically, the considered tested values are 7\%, 9\%, 11\% and 15\% and the performances are reported in Table~\ref{tab:spamparsingperf}.
+In order to assign as correct a value as possible, some test has been done using different thresholds and checking the corresponding performance.  More specifically, the considered tested values are 7\%, 9\%, 11\% and 15\% and the performance are reported in Table~\ref{tab:spamparsingperf}.
 \begin{center}
 \begin{table}[tb]
 \centering
 \begin{tabular}{|l|c|c|c|c|c|} 
  \hline
-   THRESHOLD & DOC KEPT & MAP & P@5 & R@1000 & NDCG\\
+   THRESHOLD & DOC KEPT & MAP & P@5 & R@1000 & nDCG\\
  \hline\hline
  7\% & \(\simeq 74\%\) & 0.1462 & 0.1378 & 0.4869 & 0.2564\\ 
  9\% & \(\simeq 83\%\) & 0.1729 & 0.1508 & 0.6135 & 0.3041\\
@@ -404,12 +404,12 @@ In order to assign as correct a value as possible, some test has been done using
  15\% & \(\simeq 93\%\) & 0.2067 & 0.1607 & 0.7648 & 0.3623\\ 
  \hline
 \end{tabular}
-\caption{Comparison of spam parsing performances.}
+\caption{Comparison of spam parsing performance.}
 \label{tab:spamparsingperf}
 \end{table}
 \end{center}
 \par
-With this kind of methodology it was expected that, for thresholds below the average value reported above, the performance would have dropped down since the parsing was acting aggressively removing the relevant documents. On the other hand, for bigger thresholds, it was also expected bad performances since the action of the filter would have been not significant. An intermediate value, instead, would have ensured the right balance between the two cases. The heuristic results show an opposite behaviour  of the performances from the one described above since the increase in performance as the threshold increases. This behaviour suggests other implementations (as reported in Section~\ref{sec:conclusion}) of the frequencies analyses possibly weighting the two ratios used during the comparisons with thresholds. With the consideration of the data discussed above, the threshold used during analyses with test data corresponds to 15\%.    
+With this kind of methodology it was expected that, for thresholds below the average value reported above, the performance would have dropped down since the parsing was acting aggressively removing the relevant documents. On the other hand, for bigger thresholds, it was also expected bad performance since the action of the filter would have been not significant. An intermediate value, instead, would have ensured the right balance between the two cases. The heuristic results show an opposite behaviour  of the performance from the one described above since the increase in performance as the threshold increases. This behaviour suggests other implementations (as reported in Section~\ref{sec:conclusion}) of the frequencies analyses possibly weighting the two ratios used during the comparisons with thresholds. With the consideration of the data discussed above, the threshold used during analyses with test data corresponds to 15\%.    
 
 \subsubsection{BM25FRENCHNOENG system}
 \label{subsub:BM25FRENCHNOENG}

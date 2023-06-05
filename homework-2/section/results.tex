@@ -6,12 +6,12 @@
 %Conduct a statistical validation of the experimental results.
 
 %Discuss the results and any relevant issues.
-In this section we first discuss the performances on training data and how these were used to select the system to submit to the LongEval lab. After that we analyze the performance on test data (with some discussions) and report the hypotesis testing and failure analysis.
+In this section we first discuss the performance on training data and how these were used to select the system to submit to the LongEval lab. After that we analyze the performance on test data (with some discussions) and report the hypotesis testing and failure analysis.
 
 
 
-\subsection{Performances on Training Data and Discussion}
-\label{subsec:performances}
+\subsection{Performance on Training Data and Discussion}
+\label{subsec:performance}
 As aforementioned, it can be noted how work on the French corpus has been largely favoured.
 Due to the fact that the English document and query set were obtained by translation of the French ones, the former batch contains a lot of translation-induced noise which strongly interferes with the goal of setting up an effective IR system. This was already seen from Table~\ref{tab:qtransl}.
 
@@ -39,7 +39,7 @@ Such a translation, while semantically correct, makes it harder for the IR syste
   \centering
   \begin{tabular}{|l|l|l|l|l|l|}
     \toprule
-    System name & Language & NDCG & MAP & Recall@1000 & CLEF-submitted?\\
+    System name & Language & nDCG & MAP & Recall@1000 & CLEF-submitted?\\
     \midrule
     \textbf{BM25FRENCHBOOSTURL} & \textbf{French} & \textbf{0.3815} & \textbf{0.2152} & \textbf{0.8421} & \textbf{Yes}\\
     BM25FRENCHBASE & French & 0.3812 & 0.2146 & 0.8451 & Yes\\
@@ -73,23 +73,23 @@ Figure~\ref{fig:prcurve} shows the interpolated precision-recall curve for the t
 
 
 
-\subsection{Performances}
+\subsection{Performance on Test Data}
 \label{subsec:perfs}
 Table~\ref{tab:sysperftest} reports the results computed for our CLEF-submitted systems over the LongEval test datasets. Each metric group represents a different indexing scenario, whether on same-time (of training data), short term evolution or long term evolution.
 \begin{table}[tb]
-  \caption{Test-time systems performance overview}
+  \caption{Test-time systems performance overview (nDCG)}
   \label{tab:sysperftest}
   \centering
   \begin{tabular}{|l|l|l|l|l|l|l|}
     \toprule
     \multirow{2}{*}{System name} & \multicolumn{2}{|c|}{Within Time} & \multicolumn{2}{|c|}{Short Term} & \multicolumn{2}{|c|}{Long Term}\\ 
-    & NDCG & Recall@1000 & NDCG & Recall@1000 & NDCG & Recall@1000\\
+    & nDCG & Recall@1000 & nDCG & Recall@1000 & nDCG & Recall@1000\\
     \midrule
-    \textbf{BM25FRENCHBOOSTURL} & \textbf{0,3859} & \textbf{0,8708} & \textbf{0,3866} & \textbf{0,8323} & \textbf{0,3945} & \textbf{0,8556}\\
-    BM25FRENCHBASE & 0,3843 & 0,8684 & 0,3924 & 0,8375 & 0,3916 & 0,8531\\
-    BM25FRENCHRERANK100 & 0,3755 & 0,8644 & 0,3756 & 0,8365 & 0,3758 & 0,8531\\
-    BM25FRENCHSPAM & 0,3605 & 0,7874 & 0,368 & 0,7686 & 0,3643 & 0,7773\\
-    BM25TRANSLATEDQUERIES & 0,3072 & 0,7317 & 0,3051 & 0,7225 & 0,3189 & 0,7482\\
+    \textbf{BM25FRENCHBOOSTURL} & \textbf{0.3859} & \textbf{0.8708} & \textbf{0.3866} & \textbf{0.8323} & \textbf{0.3945} & \textbf{0.8556}\\
+    BM25FRENCHBASE & 0.3843 & 0.8684 & 0.3924 & 0.8375 & 0.3916 & 0.8531\\
+    BM25FRENCHRERANK100 & 0.3755 & 0.8644 & 0.3756 & 0.8365 & 0.3758 & 0.8531\\
+    BM25FRENCHSPAM & 0.3605 & 0.7874 & 0.368 & 0.7686 & 0.3643 & 0.7773\\
+    BM25TRANSLATEDQUERIES & 0.3072 & 0.7317 & 0.3051 & 0.7225 & 0.3189 & 0.7482\\
   \bottomrule
 \end{tabular}
 \end{table}
@@ -117,7 +117,7 @@ From the Box plots reported in Figure~\ref{fig:WTBP} we can see that the systems
 \end{figure}
 This is not confirmed by the output of \ac{ANOVA} reported in Table~\ref{tab:WTANOVA} since the P-Value result to be lower than the considered threshold. Nonetheless, the results can be considered reliable since the system contribution is much higher than the error contribution.
 \begin{table}[tb]
-  \caption{Two-Way ANOVA Within Time}
+  \caption{Two-Way ANOVA Within Time (based on nDCG)}
   \label{tab:WTANOVA}
   \centering
   \begin{tabular}{|l|l|l|l|l|l|}
@@ -177,7 +177,7 @@ We can conclude that the systems are quite similar but the \textit{BM25TRANSLATE
 
 \subsubsection{Short Term}
 \label{subsubsec:st}
-By looking at the box plot reported in Figure~\ref{fig:STBP} we see that the systems have pretty much the same performances, only \textit{BM25TRANSLATEDQUERIES} differs a bit from the others.
+By looking at the box plot reported in Figure~\ref{fig:STBP} we see that the systems have pretty much the same performance, only \textit{BM25TRANSLATEDQUERIES} differs a bit from the others.
 \begin{figure}[tb]
     \centering
     \includegraphics[scale=0.5]{figure/shortterm/boxplot.png}
@@ -188,7 +188,7 @@ Furthermore we can see that the extension of the whiskers in almost all the syst
 \par
 The two-way \ac{ANOVA} (whose results are reported in Table~\ref{tab:STANOVA}) does reveal relevant differences among the systems since the P-Value result to be lower than the considered threshold. Furthermore, the results of \ac{ANOVA} can be considered reliable since the system contribution is much higher than the error contribution.
 \begin{table}[tb]
-  \caption{Two-Way ANOVA Short Time}
+  \caption{Two-Way ANOVA Short Time (based on nDCG)}
   \label{tab:STANOVA}
   \centering
   \begin{tabular}{|l|l|l|l|l|l|}
@@ -256,7 +256,7 @@ Furthermore we can see that the extension of the whiskers in almost all the syst
 \par
 The two-way \ac{ANOVA} (whose results are reported in Table~\ref{tab:LTANOVA}) does reveal relevant differences among the systems since the P-Value result to be lower than the considered threshold. Furthermore, the results of \ac{ANOVA} can be considered reliable since the system contribution is much higher than the error contribution.
 \begin{table}[tb]
-  \caption{Two-Way ANOVA Long Time}
+  \caption{Two-Way ANOVA Long Time (based on nDCG)}
   \label{tab:LTANOVA}
   \centering
   \begin{tabular}{|l|l|l|l|l|l|}
